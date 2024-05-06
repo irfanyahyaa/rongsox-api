@@ -38,5 +38,5 @@ public class Admin {
     private UserAccount userAccount;
 
     @Column(name = "status")
-    private Boolean Status;
+    private Boolean status;
 }

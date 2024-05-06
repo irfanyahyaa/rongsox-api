@@ -4,6 +4,7 @@ import com.enigma.bank_sampah.constant.ConstantTable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class UserAccount implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return role.stream().map(role -> new SimpleGrantedAuthority(role.getRole().name())).toList();
     }
 
     @Override

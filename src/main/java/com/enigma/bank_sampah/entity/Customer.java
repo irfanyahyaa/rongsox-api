@@ -54,4 +54,11 @@ public class Customer {
     @JsonManagedReference
     private List<BankAccount> bankAccounts;
 
+    @OneToMany(mappedBy = "customer")
+    @JsonManagedReference
+    private List<Token> tokens;
+
+    @Column( name = "status")
+    private Boolean status;
+
 }
