@@ -13,6 +13,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -130,6 +132,54 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
+    public RegisterResponse registerCustomerByAdmin(CustomerRequest request) {
+        Optional<UserAccount> byUsername = userAccountRepository.findByUsername(request.getUsername());
+        if (byUsername.isPresent()) {
+            throw new DataIntegrityViolationException("User already exists");
+        }
+
+        Optional<UserAccount> byEmail = userAccountRepository.findByEmail(request.getEmail());
+        if (byEmail.isPresent()) {
+            throw new DataIntegrityViolationException("Email already exists");
+        }
+
+        Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
+        String hashPassword = passwordEncoder.encode(request.getPassword());
+
+        UserAccount account = UserAccount.builder()
+                .username(request.getUsername())
+                .password(hashPassword)
+                .email(request.getEmail())
+                .role(List.of(role))
+                .isEnable(true)
+                .build();
+
+        userAccountRepository.saveAndFlush(account);
+
+        Customer customer = Customer.builder()
+                .name(request.getName())
+                .phoneNumber(request.getMobilePhoneNo())
+                .address(request.getAddress())
+                .birthDate(request.getBirthDate())
+                .ktpNumber(request.getKtpNumber())
+                .status(true)
+                .userAccount(account)
+                .build();
+        customerService.create(customer);
+
+        List<String> roles = account.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).toList();
+
+        return RegisterResponse.builder()
+                .username(account.getUsername())
+                .email(account.getEmail())
+                .roles(roles)
+                .type("registration")
+                .message(ResponseMessage.SUCCESS_REGISTER)
+                .build();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerAdmin(AdminRequest request) {
@@ -151,7 +201,6 @@ public class AuthServiceImpl implements AuthService {
         Admin admin = Admin.builder()
                 .name(request.getName())
                 .address(request.getAddress())
-                .position(request.getPosition())
                 .status(true)
                 .userAccount(account)
                 .build();
@@ -175,13 +224,20 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public LoginResponse login(AuthRequest request) {
+        UserAccount userAccount = userAccountRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
+//                request.getUsername(),
+//                request.getPassword()
+                userAccount.getUsername(),
+                request.getPassword(),
+                userAccount.getAuthorities()
         );
         Authentication authenticate = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-        UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
+//        UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
         String token = jwtService.generateToken(userAccount);
 
         LoginResponse response = LoginResponse.builder()
@@ -211,6 +267,8 @@ public class AuthServiceImpl implements AuthService {
         return userAccount != null;
     }
 
+
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ValidationOtpResponse validateOtp(ValidationOtpRequest request) {
         String otp = request.getOtp();
@@ -222,7 +280,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid OTP");
         }
 
-        UserAccount userAccount = token.getCustomer().getUserAccount();
+        UserAccount userAccount = userAccountRepository.findByUsername(token.getCustomer().getUserAccount().getUsername()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
         if (!userAccount.getEmail().equals(email)) {
             throw new RuntimeException("Invalid email");
         }
@@ -234,7 +295,10 @@ public class AuthServiceImpl implements AuthService {
 
         if(type.equalsIgnoreCase("registration")){
             userAccount.setIsEnable(true);
+            userAccountRepository.saveAndFlush(userAccount);
+
             tokenService.removeToken(token);
+//            refreshSecurityContext(userAccount);
         }
 
         return ValidationOtpResponse.builder()
@@ -253,12 +317,12 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<UserAccount> byEmail = userAccountRepository.findByEmail(email);
         if(byEmail.isEmpty()){
-            throw new RuntimeException("Email not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
         UserAccount userAccount = byEmail.orElse(null);
         if(userAccount.getIsEnable()){
-            throw new RuntimeException("User account already activated, please login.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
         Customer byIdUserAccount = customerService.getByIdUserAccount(userAccount.getId());
@@ -322,5 +386,15 @@ public class AuthServiceImpl implements AuthService {
         String body ="your verification otp is: "+ otp;
         emailService.sendEmail(email,subject,body);
     }
+
+//    private void refreshSecurityContext(UserAccount userAccount) {
+//        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+//                userAccount.getUsername(),
+//                userAccount.getPassword(),
+//                userAccount.getAuthorities()
+//        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(newAuth);
+//    }
 
 }

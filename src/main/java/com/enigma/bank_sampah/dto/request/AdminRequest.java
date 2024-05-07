@@ -13,6 +13,4 @@ public class AdminRequest {
     private String name;
     private String email;
     private String address;
-    private String position;
-    private Boolean status;
 }

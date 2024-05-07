@@ -16,4 +16,5 @@ public class ResponseMessage {
     public static final String SUCCESS_REGISTER = "register successfully";
     public static final String ERROR_INVALID_CONTENT_TYPE = "invalid image type";
     public static final String ERROR_INVALID_JWT = "invalid jwt";
+    public static final String BAD_REQUEST = "bad request";
 }
