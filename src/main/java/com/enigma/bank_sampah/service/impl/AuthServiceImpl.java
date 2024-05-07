@@ -183,12 +183,24 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
         String token = jwtService.generateToken(userAccount);
-        return LoginResponse.builder()
-                .userId(userAccount.getId())
+
+        LoginResponse response = LoginResponse.builder()
+                .userAccountId(userAccount.getId())
                 .username(userAccount.getUsername())
                 .roles(userAccount.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .token(token)
                 .build();
+
+        if( customerService.getByIdUserAccount(userAccount.getId()) != null ){
+            response.setCustomerId(customerService.getByIdUserAccount(userAccount.getId()).getId());
+        }
+
+        if( adminService.getByUserAccountId(userAccount.getId()) != null ){
+            response.setAdminId(adminService.getByUserAccountId(userAccount.getId()).getId());
+        }
+
+        return response;
+
     }
 
     @Override
