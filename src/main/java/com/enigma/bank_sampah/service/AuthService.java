@@ -7,6 +7,7 @@ import com.enigma.bank_sampah.dto.response.ValidationOtpResponse;
 
 public interface AuthService {
     RegisterResponse registerCustomer(CustomerRequest request);
+    RegisterResponse registerCustomerByAdmin(CustomerRequest request);
     RegisterResponse registerAdmin(AdminRequest request);
     LoginResponse login(AuthRequest request);
     boolean validateToken();
