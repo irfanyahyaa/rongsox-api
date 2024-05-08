@@ -78,16 +78,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomer(CustomerRequest request) throws DataIntegrityViolationException {
-        Optional<UserAccount> byUsername = userAccountRepository.findByUsername(request.getUsername());
-        if (byUsername.isPresent()) {
-            throw new DataIntegrityViolationException("User already exists");
-        }
-
-        Optional<UserAccount> byEmail = userAccountRepository.findByEmail(request.getEmail());
-        if (byEmail.isPresent()) {
-            throw new DataIntegrityViolationException("Email already exists");
-        }
-
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
@@ -131,19 +121,9 @@ public class AuthServiceImpl implements AuthService {
                 .message(ResponseMessage.SUCCESS_REGISTER)
                 .build();
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public RegisterResponse registerCustomerByAdmin(CustomerRequest request) {
-        Optional<UserAccount> byUsername = userAccountRepository.findByUsername(request.getUsername());
-        if (byUsername.isPresent()) {
-            throw new DataIntegrityViolationException("User already exists");
-        }
-
-        Optional<UserAccount> byEmail = userAccountRepository.findByEmail(request.getEmail());
-        if (byEmail.isPresent()) {
-            throw new DataIntegrityViolationException("Email already exists");
-        }
-
+    public RegisterResponse registerCustomerByAdmin(CustomerRequest request) throws DataIntegrityViolationException {
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
@@ -182,7 +162,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public RegisterResponse registerAdmin(AdminRequest request) {
+    public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException{
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
         Role roleCustomer = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
 
@@ -229,15 +209,13 @@ public class AuthServiceImpl implements AuthService {
 
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-//                request.getUsername(),
-//                request.getPassword()
                 userAccount.getUsername(),
                 request.getPassword(),
                 userAccount.getAuthorities()
         );
         Authentication authenticate = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-//        UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
+
         String token = jwtService.generateToken(userAccount);
 
         LoginResponse response = LoginResponse.builder()
@@ -298,7 +276,6 @@ public class AuthServiceImpl implements AuthService {
             userAccountRepository.saveAndFlush(userAccount);
 
             tokenService.removeToken(token);
-//            refreshSecurityContext(userAccount);
         }
 
         return ValidationOtpResponse.builder()
@@ -386,15 +363,5 @@ public class AuthServiceImpl implements AuthService {
         String body ="your verification otp is: "+ otp;
         emailService.sendEmail(email,subject,body);
     }
-
-//    private void refreshSecurityContext(UserAccount userAccount) {
-//        Authentication newAuth = new UsernamePasswordAuthenticationToken(
-//                userAccount.getUsername(),
-//                userAccount.getPassword(),
-//                userAccount.getAuthorities()
-//        );
-//
-//        SecurityContextHolder.getContext().setAuthentication(newAuth);
-//    }
 
 }

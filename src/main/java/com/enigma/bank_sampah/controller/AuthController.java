@@ -104,11 +104,11 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK.value()).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PostMapping(path = "/register/admin",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<CommonResponse<?>> registerAdmin(@RequestBody AdminRequest request) {
         RegisterResponse register = authService.registerAdmin(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
