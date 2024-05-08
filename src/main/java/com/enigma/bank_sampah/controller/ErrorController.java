@@ -48,7 +48,15 @@ public class ErrorController {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Data already exist");
             httpStatus = HttpStatus.CONFLICT;
-        } else {
+        }else if (e.getMessage().contains("Username already exists") || e.getMessage().contains("Duplicate entry")) {
+            builder.statusCode(HttpStatus.CONFLICT.value());
+            builder.message("Username already exists");
+            httpStatus = HttpStatus.CONFLICT;
+        }else if (e.getMessage().contains("Email already exists") || e.getMessage().contains("Duplicate entry")) {
+            builder.statusCode(HttpStatus.CONFLICT.value());
+            builder.message("Email already exists");
+            httpStatus = HttpStatus.CONFLICT;
+        }else {
             builder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             builder.message("Internal Server Error");
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

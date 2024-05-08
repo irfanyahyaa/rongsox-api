@@ -78,6 +78,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomer(CustomerRequest request) throws DataIntegrityViolationException {
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
+
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
@@ -124,6 +126,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomerByAdmin(CustomerRequest request) throws DataIntegrityViolationException {
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
+
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
@@ -163,6 +167,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException{
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
+
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
         Role roleCustomer = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
 
@@ -362,6 +368,18 @@ public class AuthServiceImpl implements AuthService {
         String subject = "Email verification";
         String body ="your verification otp is: "+ otp;
         emailService.sendEmail(email,subject,body);
+    }
+
+    private void checkEmailAndUserName(String userName, String email) {
+        Optional<UserAccount> existingUser = userAccountRepository.findByUsername(userName);
+        if (existingUser.isPresent()) {
+            throw new DataIntegrityViolationException("Username already exists");
+        }
+
+        Optional<UserAccount> existingEmail = userAccountRepository.findByEmail(email);
+        if (existingEmail.isPresent()) {
+            throw new DataIntegrityViolationException("Email already exists");
+        }
     }
 
 }
