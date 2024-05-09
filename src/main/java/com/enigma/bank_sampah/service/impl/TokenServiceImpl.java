@@ -55,6 +55,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void removeTokenByCustomerAndType(Customer customer, String type) {
-        tokenRepository.removeTokensByCustomerAndTokenType(customer,type);
+        tokenRepository.removeTokensByCustomerAndTokenType(customer.getId(),type);
     }
 }

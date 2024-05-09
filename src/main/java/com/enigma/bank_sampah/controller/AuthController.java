@@ -35,6 +35,21 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
+    @PostMapping(path = "/register/customerByAdmin",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<?>> registerUserByAdmin(@RequestBody CustomerRequest request) {
+        RegisterResponse register = authService.registerCustomerByAdmin(request);
+        CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message(ResponseMessage.SUCCESS_SAVE_DATA)
+                .data(register)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PostMapping(path = "/resend-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -82,18 +97,18 @@ public class AuthController {
         ValidationOtpResponse validationOtpResponse = authService.validateOtp(request);
         CommonResponse<ValidationOtpResponse> response = CommonResponse.<ValidationOtpResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .message(ResponseMessage.SUCCESS_VALIDATE_OTP)
                 .data(validationOtpResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK.value()).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PostMapping(path = "/register/admin",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<CommonResponse<?>> registerAdmin(@RequestBody AdminRequest request) {
         RegisterResponse register = authService.registerAdmin(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()

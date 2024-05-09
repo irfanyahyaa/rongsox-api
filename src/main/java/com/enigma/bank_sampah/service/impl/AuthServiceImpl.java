@@ -13,6 +13,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -76,15 +78,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomer(CustomerRequest request) throws DataIntegrityViolationException {
-        Optional<UserAccount> byUsername = userAccountRepository.findByUsername(request.getUsername());
-        if (byUsername.isPresent()) {
-            throw new DataIntegrityViolationException("User already exists");
-        }
-
-        Optional<UserAccount> byEmail = userAccountRepository.findByEmail(request.getEmail());
-        if (byEmail.isPresent()) {
-            throw new DataIntegrityViolationException("Email already exists");
-        }
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
 
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -129,10 +123,52 @@ public class AuthServiceImpl implements AuthService {
                 .message(ResponseMessage.SUCCESS_REGISTER)
                 .build();
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RegisterResponse registerCustomerByAdmin(CustomerRequest request) throws DataIntegrityViolationException {
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
+
+        Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
+        String hashPassword = passwordEncoder.encode(request.getPassword());
+
+        UserAccount account = UserAccount.builder()
+                .username(request.getUsername())
+                .password(hashPassword)
+                .email(request.getEmail())
+                .role(List.of(role))
+                .isEnable(true)
+                .build();
+
+        userAccountRepository.saveAndFlush(account);
+
+        Customer customer = Customer.builder()
+                .name(request.getName())
+                .phoneNumber(request.getMobilePhoneNo())
+                .address(request.getAddress())
+                .birthDate(request.getBirthDate())
+                .ktpNumber(request.getKtpNumber())
+                .status(true)
+                .userAccount(account)
+                .build();
+        customerService.create(customer);
+
+        List<String> roles = account.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).toList();
+
+        return RegisterResponse.builder()
+                .username(account.getUsername())
+                .email(account.getEmail())
+                .roles(roles)
+                .type("registration")
+                .message(ResponseMessage.SUCCESS_REGISTER)
+                .build();
+    }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public RegisterResponse registerAdmin(AdminRequest request) {
+    public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException{
+        checkEmailAndUserName(request.getUsername() , request.getEmail());
+
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
         Role roleCustomer = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
 
@@ -151,7 +187,6 @@ public class AuthServiceImpl implements AuthService {
         Admin admin = Admin.builder()
                 .name(request.getName())
                 .address(request.getAddress())
-                .position(request.getPosition())
                 .status(true)
                 .userAccount(account)
                 .build();
@@ -175,20 +210,37 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public LoginResponse login(AuthRequest request) {
+        UserAccount userAccount = userAccountRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
+                userAccount.getUsername(),
+                request.getPassword(),
+                userAccount.getAuthorities()
         );
         Authentication authenticate = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-        UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
+
         String token = jwtService.generateToken(userAccount);
-        return LoginResponse.builder()
-                .userId(userAccount.getId())
+
+        LoginResponse response = LoginResponse.builder()
+                .userAccountId(userAccount.getId())
                 .username(userAccount.getUsername())
                 .roles(userAccount.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .token(token)
                 .build();
+
+        if( customerService.getByIdUserAccount(userAccount.getId()) != null ){
+            response.setCustomerId(customerService.getByIdUserAccount(userAccount.getId()).getId());
+        }
+
+        if( adminService.getByUserAccountId(userAccount.getId()) != null ){
+            response.setAdminId(adminService.getByUserAccountId(userAccount.getId()).getId());
+        }
+
+        return response;
+
     }
 
     @Override
@@ -199,6 +251,8 @@ public class AuthServiceImpl implements AuthService {
         return userAccount != null;
     }
 
+
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ValidationOtpResponse validateOtp(ValidationOtpRequest request) {
         String otp = request.getOtp();
@@ -210,7 +264,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid OTP");
         }
 
-        UserAccount userAccount = token.getCustomer().getUserAccount();
+        UserAccount userAccount = userAccountRepository.findByUsername(token.getCustomer().getUserAccount().getUsername()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
         if (!userAccount.getEmail().equals(email)) {
             throw new RuntimeException("Invalid email");
         }
@@ -222,6 +279,8 @@ public class AuthServiceImpl implements AuthService {
 
         if(type.equalsIgnoreCase("registration")){
             userAccount.setIsEnable(true);
+            userAccountRepository.saveAndFlush(userAccount);
+
             tokenService.removeToken(token);
         }
 
@@ -241,12 +300,12 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<UserAccount> byEmail = userAccountRepository.findByEmail(email);
         if(byEmail.isEmpty()){
-            throw new RuntimeException("Email not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
         UserAccount userAccount = byEmail.orElse(null);
         if(userAccount.getIsEnable()){
-            throw new RuntimeException("User account already activated, please login.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
         Customer byIdUserAccount = customerService.getByIdUserAccount(userAccount.getId());
@@ -309,6 +368,18 @@ public class AuthServiceImpl implements AuthService {
         String subject = "Email verification";
         String body ="your verification otp is: "+ otp;
         emailService.sendEmail(email,subject,body);
+    }
+
+    private void checkEmailAndUserName(String userName, String email) {
+        Optional<UserAccount> existingUser = userAccountRepository.findByUsername(userName);
+        if (existingUser.isPresent()) {
+            throw new DataIntegrityViolationException("Username already exists");
+        }
+
+        Optional<UserAccount> existingEmail = userAccountRepository.findByEmail(email);
+        if (existingEmail.isPresent()) {
+            throw new DataIntegrityViolationException("Email already exists");
+        }
     }
 
 }

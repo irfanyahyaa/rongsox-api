@@ -9,11 +9,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 @Transactional
 public interface AdminRepository extends JpaRepository<Admin, String>, JpaSpecificationExecutor<Admin> {
 
+    Optional<Admin> findByUserAccount_Id(String userAccount_id);
+
     @Modifying
     @Query(value = "UPDATE m_admin SET status = :status where id = :id", nativeQuery = true)
     void updateStatus(@Param("id") String id, @Param("status") Boolean status);
+
+
 }

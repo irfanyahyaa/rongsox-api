@@ -10,7 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class LoginResponse {
-    private String userId;
+    private String userAccountId;
+    private String AdminId;
+    private String CustomerId;
     private String username;
     private String token;
     private List<String> roles;

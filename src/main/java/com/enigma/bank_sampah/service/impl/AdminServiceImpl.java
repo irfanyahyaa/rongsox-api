@@ -26,6 +26,11 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.saveAndFlush(admin);
     }
 
+    @Override
+    public Admin getByUserAccountId(String id) {
+        return adminRepository.findByUserAccount_Id(id).orElse(null);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateStatusById(String id, Boolean status) {
