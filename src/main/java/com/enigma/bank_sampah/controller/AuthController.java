@@ -133,7 +133,9 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "validate-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/validate-token",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<?> validateToken() {
         boolean valid = authService.validateToken();
         if (valid) {
