@@ -1,7 +1,9 @@
 package com.enigma.bank_sampah.controller;
 
 import com.enigma.bank_sampah.constant.APIUrl;
+import com.enigma.bank_sampah.constant.ResponseMessage;
 import com.enigma.bank_sampah.dto.request.SearchAdminRequest;
+import com.enigma.bank_sampah.dto.request.UpdateAdminRequest;
 import com.enigma.bank_sampah.dto.response.AdminResponse;
 import com.enigma.bank_sampah.dto.response.CommonResponse;
 import com.enigma.bank_sampah.dto.response.PagingResponse;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +25,12 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    @GetMapping
-    public ResponseEntity<CommonResponse<List<AdminResponse>>> getAllUsers(
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<List<AdminResponse>>> getAllAdmins(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
@@ -39,7 +45,6 @@ public class AdminController {
                 .direction(direction)
                 .name(name)
                 .status(status)
-//                .query(name)
                 .build();
 
         Page<AdminResponse> admins = adminService.getAll(request);
@@ -55,7 +60,7 @@ public class AdminController {
 
         CommonResponse<List<AdminResponse>> commonResponse = CommonResponse.<List<AdminResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("users fetched successfully")
+                .message(ResponseMessage.SUCCESS_GET_DATA)
                 .data(admins.getContent())
                 .paging(pagingResponse)
                 .build();
@@ -65,28 +70,63 @@ public class AdminController {
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    @DeleteMapping("/{id}")
+    @PutMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteUser(
+    public ResponseEntity<CommonResponse<AdminResponse>> updateAdmin(
+            @RequestBody UpdateAdminRequest request
+    ) {
+        AdminResponse admin = adminService.update(request);
+
+        CommonResponse<AdminResponse> response = CommonResponse.<AdminResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .data(admin)
+                .build();
+
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @PutMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<String>> updateStatusAdmin(
+            @PathVariable(name = "id") String id,
+            @RequestParam(name = "status") Boolean status
+    ) {
+        adminService.updateStatusById(id, status);
+
+        CommonResponse<String> response = CommonResponse.<String>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .build();
+
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @DeleteMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<String>> deleteAdmin(
             @PathVariable(name = "id") String id
     ) {
         adminService.deleteById(id);
+
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("admin deleted successfully")
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
+
         return ResponseEntity
                 .ok(response);
-
-//        AdminResponse admin = adminService.deleteById(id);
-//
-//        CommonResponse<UserResponse> commonResponse = CommonResponse.<UserResponse>builder()
-//                .statusCode(HttpStatus.OK.value())
-//                .message("user deleted successfully")
-//                .data(user)
-//                .build();
-//
-//        return ResponseEntity
-//                .ok(commonResponse);
     }
 }

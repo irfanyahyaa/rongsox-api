@@ -14,6 +14,5 @@ public interface AuthService {
     ValidationOtpResponse validateOtp(ValidationOtpRequest request);
     void resendOtp(ResendOtpRequest request);
     void forgotPassword(ForgotPasswordRequest request);
-
     void setNewPassword(SetNewPasswordRequest request);
 }

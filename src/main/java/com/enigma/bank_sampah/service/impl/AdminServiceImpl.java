@@ -2,6 +2,7 @@ package com.enigma.bank_sampah.service.impl;
 
 import com.enigma.bank_sampah.constant.ResponseMessage;
 import com.enigma.bank_sampah.dto.request.SearchAdminRequest;
+import com.enigma.bank_sampah.dto.request.UpdateAdminRequest;
 import com.enigma.bank_sampah.dto.response.AdminResponse;
 import com.enigma.bank_sampah.entity.Admin;
 import com.enigma.bank_sampah.repository.AdminRepository;
@@ -23,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
-
     private final AdminRepository adminRepository;
     private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
@@ -34,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.saveAndFlush(admin);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Page<AdminResponse> getAll(SearchAdminRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
@@ -56,6 +57,36 @@ public class AdminServiceImpl implements AdminService {
                 .build());
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AdminResponse update(UpdateAdminRequest request) {
+        Admin adminFound = findByIdOrThrowNotFound(request.getId());
+
+        Admin admin = Admin.builder()
+                .id(adminFound.getId())
+                .name(request.getName())
+                .address(request.getAddress())
+                .position(request.getPosition())
+                .phoneNumber(request.getPhoneNumber())
+                .image(request.getImage())
+                .userAccount(adminFound.getUserAccount())
+                .status(adminFound.getStatus())
+                .build();
+        adminRepository.saveAndFlush(admin);
+
+        return AdminResponse.builder()
+                .id(admin.getId())
+                .name(admin.getName())
+                .address(admin.getAddress())
+                .position(admin.getPosition())
+                .phoneNumber(admin.getPhoneNumber())
+                .image(admin.getImage())
+                .userAccountId(admin.getUserAccount().getId())
+                .status(admin.getStatus())
+                .build();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Admin getByUserAccountId(String id) {
         return adminRepository.findByUserAccount_Id(id).orElse(null);
@@ -68,14 +99,15 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.updateStatus(id, status);
     }
 
-    private Admin findByIdOrThrowNotFound(String request) {
-        return adminRepository.findById(request)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
         updateStatusById(id, false);
+    }
+
+
+    private Admin findByIdOrThrowNotFound(String request) {
+        return adminRepository.findById(request)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }

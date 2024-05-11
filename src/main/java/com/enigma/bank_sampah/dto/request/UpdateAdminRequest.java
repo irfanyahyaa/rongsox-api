@@ -1,7 +1,6 @@
-package com.enigma.bank_sampah.dto.response;
+package com.enigma.bank_sampah.dto.request;
 
 import com.enigma.bank_sampah.entity.Image;
-import com.enigma.bank_sampah.entity.UserAccount;
 import lombok.*;
 
 @Getter
@@ -9,13 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdminResponse {
+public class UpdateAdminRequest {
     private String id;
     private String address;
     private String name;
     private String position;
     private String phoneNumber;
     private Image image;
-    private String userAccountId;
-    private Boolean status;
 }

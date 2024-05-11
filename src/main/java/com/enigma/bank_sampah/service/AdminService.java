@@ -1,6 +1,7 @@
 package com.enigma.bank_sampah.service;
 
 import com.enigma.bank_sampah.dto.request.SearchAdminRequest;
+import com.enigma.bank_sampah.dto.request.UpdateAdminRequest;
 import com.enigma.bank_sampah.dto.response.AdminResponse;
 import com.enigma.bank_sampah.entity.Admin;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ public interface AdminService {
 
     Page<AdminResponse> getAll(SearchAdminRequest request);
 
-//    AdminResponse update(UpdateAdminRequest request);
+    AdminResponse update(UpdateAdminRequest request);
 
     Admin getByUserAccountId(String id);
 
