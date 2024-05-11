@@ -13,9 +13,11 @@ public interface AdminService {
 
     Page<AdminResponse> getAll(SearchAdminRequest request);
 
-    AdminResponse update(UpdateAdminRequest request);
+    Admin getByIdEntity(String id);
 
     Admin getByUserAccountId(String id);
+
+    AdminResponse update(UpdateAdminRequest request);
 
     void updateStatusById(String id, Boolean status);
 

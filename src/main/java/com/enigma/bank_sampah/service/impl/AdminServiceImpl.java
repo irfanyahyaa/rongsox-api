@@ -57,6 +57,17 @@ public class AdminServiceImpl implements AdminService {
                 .build());
     }
 
+    @Override
+    public Admin getByIdEntity(String id) {
+        return findByIdOrThrowNotFound(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Admin getByUserAccountId(String id) {
+        return adminRepository.findByUserAccount_Id(id).orElse(null);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public AdminResponse update(UpdateAdminRequest request) {
@@ -84,12 +95,6 @@ public class AdminServiceImpl implements AdminService {
                 .userAccountId(admin.getUserAccount().getId())
                 .status(admin.getStatus())
                 .build();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public Admin getByUserAccountId(String id) {
-        return adminRepository.findByUserAccount_Id(id).orElse(null);
     }
 
     @Transactional(rollbackFor = Exception.class)
