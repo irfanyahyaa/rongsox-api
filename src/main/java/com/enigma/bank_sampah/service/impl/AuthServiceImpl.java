@@ -100,6 +100,7 @@ public class AuthServiceImpl implements AuthService {
                 .address(request.getAddress())
                 .birthDate(request.getBirthDate())
                 .ktpNumber(request.getKtpNumber())
+                .balance(0L)
                 .status(true)
                 .userAccount(account)
                 .build();
@@ -147,6 +148,7 @@ public class AuthServiceImpl implements AuthService {
                 .address(request.getAddress())
                 .birthDate(request.getBirthDate())
                 .ktpNumber(request.getKtpNumber())
+                .balance(0L)
                 .status(true)
                 .userAccount(account)
                 .build();
