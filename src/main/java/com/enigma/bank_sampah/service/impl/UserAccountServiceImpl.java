@@ -2,7 +2,7 @@ package com.enigma.bank_sampah.service.impl;
 
 import com.enigma.bank_sampah.entity.UserAccount;
 import com.enigma.bank_sampah.repository.UserAccountRepository;
-import com.enigma.bank_sampah.service.UserService;
+import com.enigma.bank_sampah.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserAccountServiceImpl implements UserAccountService {
 
     private final UserAccountRepository userAccountRepository;
 
