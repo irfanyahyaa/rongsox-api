@@ -40,10 +40,6 @@ public class Transaction {
     private Admin admin;
 
     @OneToOne
-    @JoinColumn( name = "bank_id")
-    private Bank bank;
-
-    @OneToOne
     @JoinColumn( name = "withdrawal_image_id")
     private Image withdrawalImageId;
 

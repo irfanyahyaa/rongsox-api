@@ -35,6 +35,10 @@ public class BankAccount {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @OneToOne
+    @JoinColumn( name = "bank_id")
+    private Bank bank;
+
     @Column(name = "status")
     private Boolean status;
 
