@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankRequest {
-    private String bankName;
     private String bankCode;
+    private String bankName;
 }
