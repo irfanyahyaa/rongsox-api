@@ -25,7 +25,7 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<CommonResponse<?>> registerUser(@RequestBody CustomerRequest request) {
+    public ResponseEntity<CommonResponse<?>> registerCustomer(@RequestBody CustomerRequest request) {
         RegisterResponse register = authService.registerCustomer(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -40,7 +40,7 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<CommonResponse<?>> registerUserByAdmin(@RequestBody CustomerRequest request) {
+    public ResponseEntity<CommonResponse<?>> registerCustomerByAdmin(@RequestBody CustomerRequest request) {
         RegisterResponse register = authService.registerCustomerByAdmin(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())

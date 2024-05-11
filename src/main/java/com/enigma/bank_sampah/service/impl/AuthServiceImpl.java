@@ -68,6 +68,7 @@ public class AuthServiceImpl implements AuthService {
         userAccountRepository.saveAndFlush(account);
 
         Admin admin = Admin.builder()
+                .name("Super Admin")
                 .status(true)
                 .userAccount(account)
                 .build();
@@ -120,7 +121,6 @@ public class AuthServiceImpl implements AuthService {
                 .email(account.getEmail())
                 .roles(roles)
                 .type(token.getTokenType())
-                .message(ResponseMessage.SUCCESS_REGISTER)
                 .build();
     }
     @Transactional(rollbackFor = Exception.class)
@@ -160,7 +160,6 @@ public class AuthServiceImpl implements AuthService {
                 .email(account.getEmail())
                 .roles(roles)
                 .type("registration")
-                .message(ResponseMessage.SUCCESS_REGISTER)
                 .build();
     }
 
@@ -203,6 +202,7 @@ public class AuthServiceImpl implements AuthService {
 
         return RegisterResponse.builder()
                 .username(account.getUsername())
+                .email(account.getEmail())
                 .roles(roles)
                 .build();
     }
@@ -231,8 +231,8 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .build();
 
-        if( customerService.getByIdUserAccount(userAccount.getId()) != null ){
-            response.setCustomerId(customerService.getByIdUserAccount(userAccount.getId()).getId());
+        if( customerService.getByUserAccountId(userAccount.getId()) != null ){
+            response.setCustomerId(customerService.getByUserAccountId(userAccount.getId()).getId());
         }
 
         if( adminService.getByUserAccountId(userAccount.getId()) != null ){
@@ -308,7 +308,7 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
-        Customer byIdUserAccount = customerService.getByIdUserAccount(userAccount.getId());
+        Customer byIdUserAccount = customerService.getByUserAccountId(userAccount.getId());
 
         tokenService.removeTokenByCustomerAndType(byIdUserAccount, typeOtp);
 
@@ -331,7 +331,7 @@ public class AuthServiceImpl implements AuthService {
         }
         UserAccount userAccount = byEmail.orElse(null);
 
-        Customer byIdUserAccount = customerService.getByIdUserAccount(userAccount.getId());
+        Customer byIdUserAccount = customerService.getByUserAccountId(userAccount.getId());
 
         Token token = tokenService.createToken();
         token.setTokenType("forgot-password");
