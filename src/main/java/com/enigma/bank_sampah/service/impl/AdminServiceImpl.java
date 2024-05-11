@@ -5,9 +5,12 @@ import com.enigma.bank_sampah.dto.request.SearchAdminRequest;
 import com.enigma.bank_sampah.dto.request.UpdateAdminRequest;
 import com.enigma.bank_sampah.dto.response.AdminResponse;
 import com.enigma.bank_sampah.entity.Admin;
+import com.enigma.bank_sampah.entity.Customer;
+import com.enigma.bank_sampah.entity.UserAccount;
 import com.enigma.bank_sampah.repository.AdminRepository;
 import com.enigma.bank_sampah.service.AdminService;
 import com.enigma.bank_sampah.service.ImageService;
+import com.enigma.bank_sampah.service.UserService;
 import com.enigma.bank_sampah.specification.AdminSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final ImageService imageService;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(rollbackFor = Exception.class)
@@ -107,7 +111,15 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
-        updateStatusById(id, false);
+        Admin admin = findByIdOrThrowNotFound(id);
+        UserAccount userAccount = userService.getByUserId(admin.getUserAccount().getId());
+
+        if (admin.getImage() != null) {
+            imageService.deleteById(admin.getImage().getId());
+        }
+
+        adminRepository.updateStatus(id, false);
+        userAccount.setIsEnable(false);
     }
 
 
