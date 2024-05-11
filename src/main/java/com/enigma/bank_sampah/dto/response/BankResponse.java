@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class BankResponse {
     private String bankId;
-    private String bankName;
     private String bankCode;
+    private String bankName;
 }

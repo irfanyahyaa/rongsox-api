@@ -74,8 +74,8 @@ public class BankServiceImpl implements BankService {
         return bankRepository.findAll(specification , pageable).map(
                 bank -> BankResponse.builder()
                         .bankId(bank.getId())
-                        .bankName(bank.getName())
                         .bankCode(bank.getBankCode())
+                        .bankName(bank.getName())
                         .build()
         );
 

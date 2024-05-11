@@ -3,7 +3,7 @@ package com.enigma.bank_sampah.security;
 import com.enigma.bank_sampah.dto.response.JwtClaims;
 import com.enigma.bank_sampah.entity.UserAccount;
 import com.enigma.bank_sampah.service.JwtService;
-import com.enigma.bank_sampah.service.UserService;
+import com.enigma.bank_sampah.service.UserAccountService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import java.io.IOException;
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserAccountService userAccountService;
 
     final String AUTH_HEADER = "Authorization";
     @Override
@@ -38,7 +38,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
             if (bearerToken != null && jwtService.verifyJwtToken(bearerToken)) {
                 JwtClaims jwtClaims = jwtService.getClaimsByToken(bearerToken);
-                UserAccount userAccount = userService.getByUserId(jwtClaims.getUserAccountId());
+                UserAccount userAccount = userAccountService.getByUserId(jwtClaims.getUserAccountId());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userAccount.getUsername(),
                         null,
