@@ -24,9 +24,6 @@ public class BankAccount {
     @Column(name = "account_number", unique = true)
     private String accountNumber;
 
-    @Column(name = "balance")
-    private Long balance;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_created", updatable = false)
     private Date dateCreated;

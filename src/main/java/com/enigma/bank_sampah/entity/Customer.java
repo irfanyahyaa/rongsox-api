@@ -38,6 +38,9 @@ public class Customer {
     @Column(name = "ktp_number")
     private String ktpNumber;
 
+    @Column(name = "balance")
+    private Long balance;
+
     @OneToOne
     @JoinColumn(name = "ktp_image_id", unique = true)
     private Image ktpImage;
