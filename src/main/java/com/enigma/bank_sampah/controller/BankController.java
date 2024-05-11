@@ -59,15 +59,19 @@ public class BankController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommonResponse<List<BankResponse>>> getAllBank(
+    public ResponseEntity<CommonResponse<List<BankResponse>>> getAllBanks(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", defaultValue = "asc") String direction,
             @RequestParam(name = "q", required = false) String query
 
     ){
         SearchBankRequest request = SearchBankRequest.builder()
                 .page(Math.max(page - 1, 0))
                 .size(size)
+                .sortBy(sortBy)
+                .direction(direction)
                 .query(query)
                 .build();
 
