@@ -16,9 +16,9 @@ import java.util.Optional;
 public interface CustomerRepository extends JpaRepository<Customer, String>, JpaSpecificationExecutor<Customer> {
     Optional<Customer> findByUserAccount_Id(String userAccount_id);
 
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
+
     @Modifying
     @Query(value = "UPDATE m_customer SET status = :status WHERE id = :id", nativeQuery = true)
     void updateStatus(@Param("id") String id, @Param("status") Boolean status);
-
 }
-

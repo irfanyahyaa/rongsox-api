@@ -155,16 +155,16 @@ public class AdminServiceImpl implements AdminService {
         userAccount.setIsEnable(false);
     }
 
-    private Admin findByIdOrThrowNotFound(String request) {
-        return adminRepository.findById(request)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-    }
-
     @Override
     public void findByPhoneNumber(String phoneNumber) {
         Optional<Admin> existingPhoneNumber = adminRepository.findAdminByPhoneNumber(phoneNumber);
         if (existingPhoneNumber.isPresent()) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
+    }
+
+    private Admin findByIdOrThrowNotFound(String request) {
+        return adminRepository.findById(request)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }
