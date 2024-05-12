@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BankRepository extends JpaRepository<Bank , String>, JpaSpecificationExecutor<Bank> {
+public interface BankRepository extends JpaRepository<Bank, String>, JpaSpecificationExecutor<Bank> {
 }

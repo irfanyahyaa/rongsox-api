@@ -9,7 +9,7 @@ import com.enigma.bank_sampah.dto.response.BankResponse;
 import com.enigma.bank_sampah.dto.response.CommonResponse;
 import com.enigma.bank_sampah.dto.response.PagingResponse;
 import com.enigma.bank_sampah.service.BankService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,9 +31,11 @@ public class BankController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<CommonResponse<?>> createNewBank(@RequestBody BankRequest request){
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<?>> createNewBank(
+            @RequestBody BankRequest request
+    ) {
         BankResponse bankResponse = bankService.create(request);
         CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -44,11 +46,15 @@ public class BankController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping(path = "/{id}",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<CommonResponse<?>> getBankById(@PathVariable String id){
-        BankResponse bankResponse = bankService.getOneById(id);
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<?>> getBankById(
+            @PathVariable String id
+    ) {
+        BankResponse bankResponse = bankService.getByIdDTO(id);
+
         CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
@@ -58,7 +64,9 @@ public class BankController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<List<BankResponse>>> getAllBanks(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
@@ -66,7 +74,7 @@ public class BankController {
             @RequestParam(name = "direction", defaultValue = "asc") String direction,
             @RequestParam(name = "q", required = false) String query
 
-    ){
+    ) {
         SearchBankRequest request = SearchBankRequest.builder()
                 .page(Math.max(page - 1, 0))
                 .size(size)
@@ -76,6 +84,7 @@ public class BankController {
                 .build();
 
         Page<BankResponse> responsePage = bankService.getAll(request);
+
         PagingResponse paging = PagingResponse.builder()
                 .totalPages(responsePage.getTotalPages())
                 .totalElement(responsePage.getTotalElements())
@@ -98,9 +107,11 @@ public class BankController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<?> updateBank(@RequestBody UpdateBankRequest request){
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<?> updateBank(
+            @RequestBody UpdateBankRequest request
+    ) {
         BankResponse update = bankService.update(request);
 
         CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
@@ -112,9 +123,16 @@ public class BankController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommonResponse<String>> deleteById(@PathVariable String id){
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
+    @DeleteMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<String>> deleteById(
+            @PathVariable String id
+    ) {
         bankService.deleteById(id);
+
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_DELETE_DATA)

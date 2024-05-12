@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class BankServiceImpl implements BankService {
@@ -35,56 +33,59 @@ public class BankServiceImpl implements BankService {
                 .bankCode(request.getBankCode())
                 .build();
         bankRepository.saveAndFlush(bank);
-        return BankResponse.builder()
-                .bankId(bank.getId())
-                .bankName(bank.getName())
-                .bankCode(bank.getBankCode())
-                .build();
-    }
 
-    @Transactional(readOnly = true)
-    @Override
-    public BankResponse getOneById(String id) {
-        Bank bank = bankRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND , ResponseMessage.ERROR_NOT_FOUND)
-        );
         return BankResponse.builder()
                 .bankId(bank.getId())
                 .bankName(bank.getName())
                 .bankCode(bank.getBankCode())
                 .build();
-    }
-    @Transactional(readOnly = true)
-    @Override
-    public Bank getById(String id) {
-        return bankRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND , ResponseMessage.ERROR_NOT_FOUND)
-        );
     }
 
     @Transactional(readOnly = true)
     @Override
     public Page<BankResponse> getAll(SearchBankRequest request) {
-        if (request.getPage() <= 0 ) request.setPage(1);
+        if (request.getPage() <= 0) request.setPage(1);
 
         Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
-        Pageable pageable = PageRequest.of( (request.getPage() - 1), request.getSize(), sort );
+        Pageable pageable = PageRequest.of((request.getPage() - 1), request.getSize(), sort);
         Specification<Bank> specification = BankSpecification.getSpecification(request.getQuery());
 
-        return bankRepository.findAll(specification , pageable).map(
+        return bankRepository.findAll(specification, pageable).map(
                 bank -> BankResponse.builder()
                         .bankId(bank.getId())
                         .bankCode(bank.getBankCode())
                         .bankName(bank.getName())
                         .build()
         );
+    }
 
+    @Transactional(readOnly = true)
+    @Override
+    public BankResponse getByIdDTO(String id) {
+        Bank bank = bankRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND)
+        );
+
+        return BankResponse.builder()
+                .bankId(bank.getId())
+                .bankName(bank.getName())
+                .bankCode(bank.getBankCode())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Bank getByIdEntity(String id) {
+        return bankRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND)
+        );
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BankResponse update(UpdateBankRequest request) {
-        Bank bank = getById(request.getBankId());
+        Bank bank = getByIdEntity(request.getBankId());
+
         bank.setName(request.getBankName());
         bank.setBankCode(request.getBankCode());
 
@@ -96,15 +97,11 @@ public class BankServiceImpl implements BankService {
                 .build();
     }
 
-    @Override
-    public Bank update(Bank bank) {
-        return bankRepository.saveAndFlush(bank);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
-        Bank bank = getById(id);
+        Bank bank = getByIdEntity(id);
+
         bankRepository.delete(bank);
     }
 }

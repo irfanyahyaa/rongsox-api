@@ -8,15 +8,15 @@ import com.enigma.bank_sampah.entity.Bank;
 import org.springframework.data.domain.Page;
 
 public interface BankService {
-    BankResponse create (BankRequest request);
-    BankResponse getOneById(String id);
-    Bank getById(String id);
+    BankResponse create(BankRequest request);
 
-    Page<BankResponse> getAll (SearchBankRequest request);
+    Page<BankResponse> getAll(SearchBankRequest request);
 
-    BankResponse update (UpdateBankRequest request);
+    Bank getByIdEntity(String id);
 
-    Bank update(Bank bank);
+    BankResponse getByIdDTO(String id);
+
+    BankResponse update(UpdateBankRequest request);
 
     void deleteById(String id);
 
