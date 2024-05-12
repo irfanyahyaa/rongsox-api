@@ -169,6 +169,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException{
         checkEmailAndUserName(request.getUsername() , request.getEmail());
+        adminService.findByPhoneNumber(request.getPhoneNumber());
 
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
         Role roleCustomer = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
@@ -187,6 +188,7 @@ public class AuthServiceImpl implements AuthService {
 
         Admin admin = Admin.builder()
                 .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
                 .status(true)
                 .userAccount(account)
@@ -194,6 +196,9 @@ public class AuthServiceImpl implements AuthService {
         adminService.create(admin);
 
         Customer customer = Customer.builder()
+                .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .address(request.getAddress())
                 .status(true)
                 .userAccount(account)
                 .build();
@@ -383,5 +388,4 @@ public class AuthServiceImpl implements AuthService {
             throw new DataIntegrityViolationException("Email already exists");
         }
     }
-
 }

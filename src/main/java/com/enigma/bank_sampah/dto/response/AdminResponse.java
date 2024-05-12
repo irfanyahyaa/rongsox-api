@@ -16,6 +16,7 @@ public class AdminResponse {
     private String position;
     private String phoneNumber;
     private Image image;
-    private String userAccountId;
+    private String email;
+    private String username;
     private Boolean status;
 }

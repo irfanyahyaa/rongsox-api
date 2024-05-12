@@ -56,6 +56,10 @@ public class ErrorController {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Email already exists");
             httpStatus = HttpStatus.CONFLICT;
+        }else if (e.getMessage().contains("Phone number already exists") || e.getMessage().contains("Duplicate entry")) {
+            builder.statusCode(HttpStatus.CONFLICT.value());
+            builder.message("Phone number already exists");
+            httpStatus = HttpStatus.CONFLICT;
         }else {
             builder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             builder.message("Internal Server Error");

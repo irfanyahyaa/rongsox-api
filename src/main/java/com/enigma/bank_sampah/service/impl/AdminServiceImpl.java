@@ -12,6 +12,7 @@ import com.enigma.bank_sampah.service.ImageService;
 import com.enigma.bank_sampah.service.UserAccountService;
 import com.enigma.bank_sampah.specification.AdminSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,10 +55,12 @@ public class AdminServiceImpl implements AdminService {
         return adminPage.map(user -> AdminResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
+                .address(user.getAddress())
                 .position(user.getPosition())
                 .phoneNumber(user.getPhoneNumber())
                 .image(user.getImage())
-                .userAccountId(user.getUserAccount().getId())
+                .email(user.getUserAccount().getEmail())
+                .username(user.getUserAccount().getUsername())
                 .status(user.getStatus())
                 .build());
     }
@@ -75,6 +80,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminResponse update(UpdateAdminRequest request) {
         Admin adminFound = findByIdOrThrowNotFound(request.getId());
+        findByPhoneNumber(request.getPhoneNumber());
 
         Admin admin = Admin.builder()
                 .id(adminFound.getId())
@@ -95,7 +101,8 @@ public class AdminServiceImpl implements AdminService {
                 .position(admin.getPosition())
                 .phoneNumber(admin.getPhoneNumber())
                 .image(admin.getImage())
-                .userAccountId(admin.getUserAccount().getId())
+                .email(admin.getUserAccount().getEmail())
+                .username(admin.getUserAccount().getUsername())
                 .status(admin.getStatus())
                 .build();
     }
@@ -103,8 +110,11 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateStatusById(String id, Boolean status) {
-        findByIdOrThrowNotFound(id);
+        Admin admin = findByIdOrThrowNotFound(id);
+        UserAccount userAccount = userAccountService.getByUserId(admin.getUserAccount().getId());
+
         adminRepository.updateStatus(id, status);
+        userAccount.setIsEnable(status);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -125,5 +135,13 @@ public class AdminServiceImpl implements AdminService {
     private Admin findByIdOrThrowNotFound(String request) {
         return adminRepository.findById(request)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
+    }
+
+    @Override
+    public void findByPhoneNumber(String phoneNumber) {
+        Optional<Admin> existingPhoneNumber = adminRepository.findAdminByPhoneNumber(phoneNumber);
+        if (existingPhoneNumber.isPresent()) {
+            throw new DataIntegrityViolationException("Phone number already exists");
+        }
     }
 }

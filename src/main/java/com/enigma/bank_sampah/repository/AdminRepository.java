@@ -14,8 +14,9 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface AdminRepository extends JpaRepository<Admin, String>, JpaSpecificationExecutor<Admin> {
-
     Optional<Admin> findByUserAccount_Id(String userAccount_id);
+
+    Optional<Admin> findAdminByPhoneNumber(String phoneNumber);
 
     @Modifying
     @Query(value = "UPDATE m_admin SET status = :status where id = :id", nativeQuery = true)

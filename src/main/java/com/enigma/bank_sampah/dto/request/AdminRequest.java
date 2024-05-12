@@ -8,9 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AdminRequest {
+    private String email;
     private String username;
     private String password;
     private String name;
-    private String email;
+    private String phoneNumber;
     private String address;
 }

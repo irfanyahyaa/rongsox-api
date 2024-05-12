@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 public interface AdminService {
     Admin create(Admin admin);
 
-//    AdminResponse getOne(String id);
-
     Page<AdminResponse> getAll(SearchAdminRequest request);
 
     Admin getByIdEntity(String id);
@@ -22,4 +20,6 @@ public interface AdminService {
     void updateStatusById(String id, Boolean status);
 
     void deleteById(String id);
+
+    void findByPhoneNumber(String phoneNumber);
 }
