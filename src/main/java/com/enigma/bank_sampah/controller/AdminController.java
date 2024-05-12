@@ -70,7 +70,7 @@ public class AdminController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @GetMapping(path = "/{id}")
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<AdminResponse>> getMenuById(
+    public ResponseEntity<CommonResponse<AdminResponse>> getAdminById(
             @PathVariable(name = "id") String id
     ) {
         AdminResponse menu = adminService.getByIdDTO(id);

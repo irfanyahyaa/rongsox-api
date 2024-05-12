@@ -99,7 +99,12 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminResponse update(UpdateAdminRequest request) {
         Admin adminFound = findByIdOrThrowNotFound(request.getId());
-        findByPhoneNumber(request.getPhoneNumber());
+
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().equals(adminFound.getPhoneNumber())) {
+            findByPhoneNumber(request.getPhoneNumber());
+        } else {
+            adminFound.setPhoneNumber(null);
+        }
 
         Admin admin = Admin.builder()
                 .id(adminFound.getId())
@@ -129,8 +134,8 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateStatusById(String id, Boolean status) {
-        Admin admin = findByIdOrThrowNotFound(id);
-        UserAccount userAccount = userAccountService.getByUserId(admin.getUserAccount().getId());
+        Admin adminFound = findByIdOrThrowNotFound(id);
+        UserAccount userAccount = userAccountService.getByUserId(adminFound.getUserAccount().getId());
 
         adminRepository.updateStatus(id, status);
         userAccount.setIsEnable(status);
@@ -139,11 +144,11 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
-        Admin admin = findByIdOrThrowNotFound(id);
-        UserAccount userAccount = userAccountService.getByUserId(admin.getUserAccount().getId());
+        Admin adminFound = findByIdOrThrowNotFound(id);
+        UserAccount userAccount = userAccountService.getByUserId(adminFound.getUserAccount().getId());
 
-        if (admin.getImage() != null) {
-            imageService.deleteById(admin.getImage().getId());
+        if (adminFound.getImage() != null) {
+            imageService.deleteById(adminFound.getImage().getId());
         }
 
         adminRepository.updateStatus(id, false);
