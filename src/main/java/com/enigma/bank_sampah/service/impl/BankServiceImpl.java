@@ -55,8 +55,7 @@ public class BankServiceImpl implements BankService {
                         .bankId(bank.getId())
                         .bankCode(bank.getBankCode())
                         .bankName(bank.getName())
-                        .build()
-        );
+                        .build());
     }
 
     @Transactional(readOnly = true)
@@ -77,8 +76,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getByIdEntity(String id) {
         return bankRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND)
-        );
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -32,7 +32,7 @@ public class BankAccount {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn( name = "bank_id")
     private Bank bank;
 
