@@ -70,6 +70,23 @@ public class AdminServiceImpl implements AdminService {
         return findByIdOrThrowNotFound(id);
     }
 
+    @Override
+    public AdminResponse getByIdDTO(String id) {
+        Admin adminFound = findByIdOrThrowNotFound(id);
+
+        return AdminResponse.builder()
+                .id(adminFound.getId())
+                .name(adminFound.getName())
+                .address(adminFound.getAddress())
+                .position(adminFound.getPosition())
+                .phoneNumber(adminFound.getPhoneNumber())
+                .image(adminFound.getImage())
+                .email(adminFound.getUserAccount().getEmail())
+                .username(adminFound.getUserAccount().getUsername())
+                .status(adminFound.getStatus())
+                .build();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Admin getByUserAccountId(String id) {

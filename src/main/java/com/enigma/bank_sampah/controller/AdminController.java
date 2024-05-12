@@ -70,6 +70,24 @@ public class AdminController {
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @GetMapping(path = "/{id}")
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<AdminResponse>> getMenuById(
+            @PathVariable(name = "id") String id
+    ) {
+        AdminResponse menu = adminService.getByIdDTO(id);
+
+        CommonResponse<AdminResponse> response = CommonResponse.<AdminResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(menu)
+                .build();
+
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
