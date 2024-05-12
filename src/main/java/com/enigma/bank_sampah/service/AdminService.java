@@ -13,9 +13,9 @@ public interface AdminService {
 
     Admin getByIdEntity(String id);
 
-    AdminResponse getByIdDTO(String id);
-
     Admin getByUserAccountId(String id);
+
+    AdminResponse getByIdDTO(String id);
 
     AdminResponse update(UpdateAdminRequest request);
 

@@ -21,6 +21,4 @@ public interface AdminRepository extends JpaRepository<Admin, String>, JpaSpecif
     @Modifying
     @Query(value = "UPDATE m_admin SET status = :status where id = :id", nativeQuery = true)
     void updateStatus(@Param("id") String id, @Param("status") Boolean status);
-
-
 }

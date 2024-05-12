@@ -40,7 +40,7 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.saveAndFlush(admin);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(readOnly = true)
     @Override
     public Page<AdminResponse> getAll(SearchAdminRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
@@ -65,11 +65,19 @@ public class AdminServiceImpl implements AdminService {
                 .build());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Admin getByIdEntity(String id) {
         return findByIdOrThrowNotFound(id);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Admin getByUserAccountId(String id) {
+        return adminRepository.findByUserAccount_Id(id).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     @Override
     public AdminResponse getByIdDTO(String id) {
         Admin adminFound = findByIdOrThrowNotFound(id);
@@ -85,12 +93,6 @@ public class AdminServiceImpl implements AdminService {
                 .username(adminFound.getUserAccount().getUsername())
                 .status(adminFound.getStatus())
                 .build();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public Admin getByUserAccountId(String id) {
-        return adminRepository.findByUserAccount_Id(id).orElse(null);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -147,7 +149,6 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.updateStatus(id, false);
         userAccount.setIsEnable(false);
     }
-
 
     private Admin findByIdOrThrowNotFound(String request) {
         return adminRepository.findById(request)

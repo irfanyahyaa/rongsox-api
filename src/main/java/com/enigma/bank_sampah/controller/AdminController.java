@@ -27,8 +27,7 @@ public class AdminController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @GetMapping(
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<List<AdminResponse>>> getAllAdmins(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -65,8 +64,7 @@ public class AdminController {
                 .paging(pagingResponse)
                 .build();
 
-        return ResponseEntity
-                .ok(commonResponse);
+        return ResponseEntity.ok(commonResponse);
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
@@ -83,15 +81,13 @@ public class AdminController {
                 .data(menu)
                 .build();
 
-        return ResponseEntity
-                .ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<AdminResponse>> updateAdmin(
             @RequestBody UpdateAdminRequest request
@@ -104,15 +100,13 @@ public class AdminController {
                 .data(admin)
                 .build();
 
-        return ResponseEntity
-                .ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @PutMapping(
             path = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<String>> updateStatusAdmin(
             @PathVariable(name = "id") String id,
@@ -125,8 +119,7 @@ public class AdminController {
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .build();
 
-        return ResponseEntity
-                .ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
@@ -144,7 +137,6 @@ public class AdminController {
                 .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
 
-        return ResponseEntity
-                .ok(response);
+        return ResponseEntity.ok(response);
     }
 }
