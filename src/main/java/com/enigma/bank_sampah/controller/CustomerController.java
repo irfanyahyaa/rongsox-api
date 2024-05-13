@@ -48,7 +48,7 @@ public class CustomerController {
                 .status(status)
                 .build();
 
-        Page<Customer> customers = customerService.getAll(request);
+        Page<CustomerResponse> customers = customerService.getAll(request);
 
         PagingResponse pagingResponse = PagingResponse.builder()
                 .totalPages(customers.getTotalPages())
@@ -59,38 +59,10 @@ public class CustomerController {
                 .hasPrevious(customers.hasPrevious())
                 .build();
 
-        List<Customer> customerList = customers.getContent();
-
-        List<CustomerResponse> customerResponses = customerList.stream().map(customer -> {
-            List<BankAccountResponse> bankAccountResponses = customer.getBankAccounts().stream().map(bankAccount ->
-                    BankAccountResponse.builder()
-                            .id(bankAccount.getId())
-                            .accountNumber(bankAccount.getAccountNumber())
-                            .dateCreated(bankAccount.getDateCreated())
-                            .customerId(bankAccount.getCustomer().getId())
-                            .status(bankAccount.getStatus())
-                            .build()).toList();
-
-            return CustomerResponse.builder()
-                    .id(customer.getId())
-                    .address(customer.getAddress())
-                    .name(customer.getName())
-                    .birthDate(customer.getBirthDate())
-                    .phoneNumber(customer.getPhoneNumber())
-                    .ktpNumber(customer.getKtpNumber())
-                    .ktpImage(customer.getKtpImage())
-                    .profileImage(customer.getProfileImage())
-                    .email(customer.getUserAccount().getEmail())
-                    .username(customer.getUserAccount().getUsername())
-                    .bankAccounts(bankAccountResponses)
-                    .status(customer.getStatus())
-                    .build();
-        }).toList();
-
         CommonResponse<List<CustomerResponse>> commonResponse = CommonResponse.<List<CustomerResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
-                .data(customerResponses)
+                .data(customers.getContent())
                 .paging(pagingResponse)
                 .build();
 

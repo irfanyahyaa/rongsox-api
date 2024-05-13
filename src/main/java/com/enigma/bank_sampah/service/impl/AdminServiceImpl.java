@@ -52,16 +52,16 @@ public class AdminServiceImpl implements AdminService {
 
         Page<Admin> adminPage = adminRepository.findAll(specification, pageable);
 
-        return adminPage.map(user -> AdminResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .address(user.getAddress())
-                .position(user.getPosition())
-                .phoneNumber(user.getPhoneNumber())
-                .image(user.getImage())
-                .email(user.getUserAccount().getEmail())
-                .username(user.getUserAccount().getUsername())
-                .status(user.getStatus())
+        return adminPage.map(admin -> AdminResponse.builder()
+                .id(admin.getId())
+                .name(admin.getName())
+                .address(admin.getAddress())
+                .position(admin.getPosition())
+                .phoneNumber(admin.getPhoneNumber())
+                .image(admin.getImage())
+                .email(admin.getUserAccount().getEmail())
+                .username(admin.getUserAccount().getUsername())
+                .status(admin.getStatus())
                 .build());
     }
 

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 public interface CustomerService {
     Customer create(Customer customer);
 
-    Page<Customer> getAll(SearchCustomerRequest request);
+    Page<CustomerResponse> getAll(SearchCustomerRequest request);
 
     Customer getByIdEntity(String id);
 
