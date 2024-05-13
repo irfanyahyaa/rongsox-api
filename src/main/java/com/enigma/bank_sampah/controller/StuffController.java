@@ -5,7 +5,6 @@ import com.enigma.bank_sampah.constant.ResponseMessage;
 import com.enigma.bank_sampah.dto.request.SearchStuffRequest;
 import com.enigma.bank_sampah.dto.request.StuffRequest;
 import com.enigma.bank_sampah.dto.request.UpdateStuffRequest;
-import com.enigma.bank_sampah.dto.response.BankResponse;
 import com.enigma.bank_sampah.dto.response.CommonResponse;
 import com.enigma.bank_sampah.dto.response.PagingResponse;
 import com.enigma.bank_sampah.dto.response.StuffResponse;
@@ -39,6 +38,7 @@ public class StuffController {
             @RequestBody StuffRequest request
     ) {
         StuffResponse stuffResponse = stuffService.create(request);
+
         CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
@@ -52,7 +52,7 @@ public class StuffController {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<?>> getAllStuff(
+    public ResponseEntity<CommonResponse<?>> getAllStuffs(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "stuffName") String sortBy,
@@ -97,7 +97,7 @@ public class StuffController {
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<?>> getStuffById(
             @PathVariable String id
-    ){
+    ) {
         StuffResponse stuffResponse = stuffService.getByIdDTO(id);
 
         CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
@@ -111,12 +111,12 @@ public class StuffController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PutMapping(
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<?>> updateStuff(
-        @RequestBody UpdateStuffRequest request
-    ){
+            @RequestBody UpdateStuffRequest request
+    ) {
         StuffResponse stuffResponse = stuffService.update(request);
 
         CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
@@ -133,11 +133,11 @@ public class StuffController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<?>> updateStuffStatus(
+    public ResponseEntity<CommonResponse<?>> updateStuffStatusById(
             @PathVariable String id,
             @RequestParam boolean status
-    ){
-        stuffService.updateStatusById(id,status);
+    ) {
+        stuffService.updateStatusById(id, status);
 
         CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
                 .statusCode(HttpStatus.OK.value())
@@ -152,9 +152,9 @@ public class StuffController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<?>> deleteStuff(
+    public ResponseEntity<CommonResponse<?>> deleteStuffById(
             @PathVariable String id
-    ){
+    ) {
         stuffService.deleteById(id);
 
         CommonResponse<String> response = CommonResponse.<String>builder()

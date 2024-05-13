@@ -27,6 +27,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final UserAccountService userAccountService;
 
     final String AUTH_HEADER = "Authorization";
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -39,18 +40,19 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (bearerToken != null && jwtService.verifyJwtToken(bearerToken)) {
                 JwtClaims jwtClaims = jwtService.getClaimsByToken(bearerToken);
                 UserAccount userAccount = userAccountService.getByUserId(jwtClaims.getUserAccountId());
+
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userAccount.getUsername(),
                         null,
                         userAccount.getAuthorities()
                 );
+
                 authentication.setDetails(new WebAuthenticationDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
         }
-
         filterChain.doFilter(request, response);
     }
 }

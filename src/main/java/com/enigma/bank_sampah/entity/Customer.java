@@ -61,7 +61,6 @@ public class Customer {
     @JsonManagedReference
     private List<Token> tokens;
 
-    @Column( name = "status")
+    @Column(name = "status")
     private Boolean status;
-
 }

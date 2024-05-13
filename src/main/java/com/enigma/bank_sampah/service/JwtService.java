@@ -5,6 +5,8 @@ import com.enigma.bank_sampah.entity.UserAccount;
 
 public interface JwtService {
     String generateToken(UserAccount userAccount);
+
     boolean verifyJwtToken(String token);
+
     JwtClaims getClaimsByToken(String token);
 }

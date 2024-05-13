@@ -18,17 +18,17 @@ public class TransactionDetail {
     private String id;
 
     @ManyToOne
-    @JoinColumn( name = "transaction_id")
+    @JoinColumn(name = "transaction_id")
     @JsonBackReference
     private Transaction transaction;
 
     @ManyToOne
-    @JoinColumn( name = "stuff_id")
+    @JoinColumn(name = "stuff_id")
     private Stuff stuff;
 
-    @Column( name = "weight")
+    @Column(name = "weight")
     private Integer weight;
 
     @Column(name = "buying_price")
-    private  Long buyingPrice;
+    private Long buyingPrice;
 }

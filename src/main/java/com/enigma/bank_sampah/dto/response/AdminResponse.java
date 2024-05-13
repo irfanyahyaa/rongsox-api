@@ -1,7 +1,6 @@
 package com.enigma.bank_sampah.dto.response;
 
 import com.enigma.bank_sampah.entity.Image;
-import com.enigma.bank_sampah.entity.UserAccount;
 import lombok.*;
 
 @Getter

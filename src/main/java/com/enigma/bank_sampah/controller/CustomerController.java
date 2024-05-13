@@ -136,7 +136,7 @@ public class CustomerController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> updateStatusCustomer(
+    public ResponseEntity<CommonResponse<String>> updateStatusCustomerById(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "status") Boolean status
     ) {
@@ -155,7 +155,7 @@ public class CustomerController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteCustomer(
+    public ResponseEntity<CommonResponse<String>> deleteCustomerById(
             @PathVariable(name = "id") String id
     ) {
         customerService.deleteById(id);

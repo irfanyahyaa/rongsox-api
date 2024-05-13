@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminSpecification {
-
     public static Specification<Admin> getSpecification(SearchAdminRequest request) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

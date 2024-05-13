@@ -11,17 +11,15 @@ import org.springframework.cache.annotation.EnableCaching;
 @SpringBootApplication
 @EnableCaching
 @OpenAPIDefinition(
-		info = @Info(
-				title = "Rongsox API",
-				version = "1.0",
-				description = "Rongsox API Documentation"
-		)
+        info = @Info(
+                title = "Rongsox API",
+                version = "1.0",
+                description = "Rongsox API Documentation"
+        )
 )
 @SecurityScheme(name = "Authorization", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")
 public class BankSampahApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(BankSampahApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(BankSampahApplication.class, args);
+    }
 }

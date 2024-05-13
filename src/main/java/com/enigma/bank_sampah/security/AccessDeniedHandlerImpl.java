@@ -17,7 +17,6 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
-
     private final ObjectMapper objectMapper;
 
     @Override

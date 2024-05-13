@@ -108,7 +108,7 @@ public class AdminController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> updateStatusAdmin(
+    public ResponseEntity<CommonResponse<String>> updateStatusAdminById(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "status") Boolean status
     ) {
@@ -127,7 +127,7 @@ public class AdminController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteAdmin(
+    public ResponseEntity<CommonResponse<String>> deleteAdminById(
             @PathVariable(name = "id") String id
     ) {
         adminService.deleteById(id);

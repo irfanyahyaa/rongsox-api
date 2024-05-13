@@ -16,9 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = ConstantTable.BANK_ACCOUNT)
 public class BankAccount {
-
     @Id
-    @GeneratedValue( strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column(name = "account_number", unique = true)
@@ -33,7 +32,7 @@ public class BankAccount {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn( name = "bank_id")
+    @JoinColumn(name = "bank_id")
     private Bank bank;
 
     @Column(name = "status")
@@ -42,5 +41,4 @@ public class BankAccount {
     @OneToMany(mappedBy = "bankAccount")
     @JsonManagedReference
     private List<Transaction> transactions;
-
 }

@@ -1,9 +1,9 @@
 package com.enigma.bank_sampah.service;
 
-import com.enigma.bank_sampah.dto.request.*;
-import com.enigma.bank_sampah.dto.response.BankResponse;
+import com.enigma.bank_sampah.dto.request.SearchStuffRequest;
+import com.enigma.bank_sampah.dto.request.StuffRequest;
+import com.enigma.bank_sampah.dto.request.UpdateStuffRequest;
 import com.enigma.bank_sampah.dto.response.StuffResponse;
-import com.enigma.bank_sampah.entity.Bank;
 import com.enigma.bank_sampah.entity.Stuff;
 import org.springframework.data.domain.Page;
 

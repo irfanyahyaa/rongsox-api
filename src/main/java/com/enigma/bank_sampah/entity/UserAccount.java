@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Table(name = ConstantTable.USER_ACCOUNT)
 public class UserAccount implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -44,7 +43,7 @@ public class UserAccount implements UserDetails {
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 

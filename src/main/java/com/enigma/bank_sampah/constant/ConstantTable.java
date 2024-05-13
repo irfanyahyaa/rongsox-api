@@ -16,5 +16,4 @@ public class ConstantTable {
     public static final String TRANSACTION_DETAIL = "m_detail_transaction";
     public static final String BANK = "m_bank";
     public static final String USER_TOKEN = "m_user_token";
-
 }

@@ -12,7 +12,6 @@ import lombok.*;
 @Entity
 @Table(name = ConstantTable.ADMIN)
 public class Admin {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -30,7 +29,7 @@ public class Admin {
     private String phoneNumber;
 
     @OneToOne
-    @JoinColumn( name = "image_id", unique = true)
+    @JoinColumn(name = "image_id", unique = true)
     private Image image;
 
     @OneToOne(cascade = CascadeType.MERGE)

@@ -31,6 +31,7 @@ public class ErrorController {
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
                 .build();
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -43,30 +44,35 @@ public class ErrorController {
         if (e.getMessage().contains("foreign key constraint")) {
             builder.statusCode(HttpStatus.BAD_REQUEST.value());
             builder.message("tidak dapat menghapus data karena ada referensi dari tabel lain");
+
             httpStatus = HttpStatus.BAD_REQUEST;
         } else if (e.getMessage().contains("unique constraint") || e.getMessage().contains("Duplicate entry")) {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Data already exist");
+
             httpStatus = HttpStatus.CONFLICT;
-        }else if (e.getMessage().contains("Username already exists") || e.getMessage().contains("Duplicate entry")) {
+        } else if (e.getMessage().contains("Username already exists") || e.getMessage().contains("Duplicate entry")) {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Username already exists");
+
             httpStatus = HttpStatus.CONFLICT;
-        }else if (e.getMessage().contains("Email already exists") || e.getMessage().contains("Duplicate entry")) {
+        } else if (e.getMessage().contains("Email already exists") || e.getMessage().contains("Duplicate entry")) {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Email already exists");
+
             httpStatus = HttpStatus.CONFLICT;
-        }else if (e.getMessage().contains("Phone number already exists") || e.getMessage().contains("Duplicate entry")) {
+        } else if (e.getMessage().contains("Phone number already exists") || e.getMessage().contains("Duplicate entry")) {
             builder.statusCode(HttpStatus.CONFLICT.value());
             builder.message("Phone number already exists");
+
             httpStatus = HttpStatus.CONFLICT;
-        }else {
+        } else {
             builder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             builder.message("Internal Server Error");
+
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return ResponseEntity.status(httpStatus).body(builder.build());
     }
-
 }

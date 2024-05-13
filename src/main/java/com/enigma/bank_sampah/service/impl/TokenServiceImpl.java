@@ -5,10 +5,8 @@ import com.enigma.bank_sampah.entity.Token;
 import com.enigma.bank_sampah.repository.TokenRepository;
 import com.enigma.bank_sampah.service.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -55,6 +53,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void removeTokenByCustomerAndType(Customer customer, String type) {
-        tokenRepository.removeTokensByCustomerAndTokenType(customer.getId(),type);
+        tokenRepository.removeTokensByCustomerAndTokenType(customer.getId(), type);
     }
 }

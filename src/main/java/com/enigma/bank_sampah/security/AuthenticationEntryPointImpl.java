@@ -18,13 +18,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         CommonResponse<?> res = CommonResponse.builder()
                 .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .message(authException.getMessage())
                 .build();
+
         String responseString = objectMapper.writeValueAsString(res);
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(responseString);

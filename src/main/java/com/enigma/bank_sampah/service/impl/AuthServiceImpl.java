@@ -75,11 +75,10 @@ public class AuthServiceImpl implements AuthService {
         adminService.create(admin);
     }
 
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomer(CustomerRequest request) throws DataIntegrityViolationException {
-        checkEmailAndUserName(request.getUsername() , request.getEmail());
+        checkEmailAndUserName(request.getUsername(), request.getEmail());
 
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -113,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
         token.setTokenType("registration");
         token.setCustomer(customer);
 
-        sendVerificationEmail(account.getEmail(),token.getToken());
+        sendVerificationEmail(account.getEmail(), token.getToken());
 
         tokenService.saveToken(token);
 
@@ -124,10 +123,11 @@ public class AuthServiceImpl implements AuthService {
                 .type(token.getTokenType())
                 .build();
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerCustomerByAdmin(CustomerRequest request) throws DataIntegrityViolationException {
-        checkEmailAndUserName(request.getUsername() , request.getEmail());
+        checkEmailAndUserName(request.getUsername(), request.getEmail());
 
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -167,8 +167,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException{
-        checkEmailAndUserName(request.getUsername() , request.getEmail());
+    public RegisterResponse registerAdmin(AdminRequest request) throws DataIntegrityViolationException {
+        checkEmailAndUserName(request.getUsername(), request.getEmail());
         adminService.findByPhoneNumber(request.getPhoneNumber());
 
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
@@ -238,11 +238,11 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .build();
 
-        if( customerService.getByUserAccountId(userAccount.getId()) != null ){
+        if (customerService.getByUserAccountId(userAccount.getId()) != null) {
             response.setCustomerId(customerService.getByUserAccountId(userAccount.getId()).getId());
         }
 
-        if( adminService.getByUserAccountId(userAccount.getId()) != null ){
+        if (adminService.getByUserAccountId(userAccount.getId()) != null) {
             response.setAdminId(adminService.getByUserAccountId(userAccount.getId()).getId());
         }
 
@@ -257,7 +257,6 @@ public class AuthServiceImpl implements AuthService {
                 .orElse(null);
         return userAccount != null;
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -284,7 +283,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("OTP has expired");
         }
 
-        if(type.equalsIgnoreCase("registration")){
+        if (type.equalsIgnoreCase("registration")) {
             userAccount.setIsEnable(true);
             userAccountRepository.saveAndFlush(userAccount);
 
@@ -306,12 +305,12 @@ public class AuthServiceImpl implements AuthService {
         String typeOtp = request.getTypeOtp();
 
         Optional<UserAccount> byEmail = userAccountRepository.findByEmail(email);
-        if(byEmail.isEmpty()){
+        if (byEmail.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
         UserAccount userAccount = byEmail.orElse(null);
-        if(userAccount.getIsEnable()){
+        if (userAccount.getIsEnable()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
@@ -323,7 +322,7 @@ public class AuthServiceImpl implements AuthService {
         token.setTokenType("registration");
         token.setCustomer(byIdUserAccount);
 
-        sendVerificationEmail(userAccount.getEmail(),token.getToken());
+        sendVerificationEmail(userAccount.getEmail(), token.getToken());
 
         tokenService.saveToken(token);
     }
@@ -333,7 +332,7 @@ public class AuthServiceImpl implements AuthService {
         String email = request.getEmail();
         Optional<UserAccount> byEmail = userAccountRepository.findByEmail(email);
 
-        if(byEmail.isEmpty()){
+        if (byEmail.isEmpty()) {
             throw new RuntimeException(ResponseMessage.ERROR_NOT_FOUND);
         }
         UserAccount userAccount = byEmail.orElse(null);
@@ -346,7 +345,7 @@ public class AuthServiceImpl implements AuthService {
 
         tokenService.saveToken(token);
 
-        sendVerificationEmail(email,token.getToken());
+        sendVerificationEmail(email, token.getToken());
     }
 
     @Override
@@ -357,7 +356,7 @@ public class AuthServiceImpl implements AuthService {
         String typeOtp = request.getTypeOtp();
 
         Optional<UserAccount> byEmail = userAccountRepository.findByEmail(email);
-        if(byEmail.isEmpty()) throw new RuntimeException(ResponseMessage.ERROR_NOT_FOUND);
+        if (byEmail.isEmpty()) throw new RuntimeException(ResponseMessage.ERROR_NOT_FOUND);
 
         UserAccount userAccount = byEmail.get();
         Token token = tokenService.findByToken(otp);
@@ -371,10 +370,10 @@ public class AuthServiceImpl implements AuthService {
         tokenService.removeToken(token);
     }
 
-    private void sendVerificationEmail(String email,String otp){
+    private void sendVerificationEmail(String email, String otp) {
         String subject = "Email verification";
-        String body ="your verification otp is: "+ otp;
-        emailService.sendEmail(email,subject,body);
+        String body = "your verification otp is: " + otp;
+        emailService.sendEmail(email, subject, body);
     }
 
     private void checkEmailAndUserName(String userName, String email) {

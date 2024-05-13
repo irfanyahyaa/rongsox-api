@@ -3,7 +3,6 @@ package com.enigma.bank_sampah.entity;
 import com.enigma.bank_sampah.constant.ConstantTable;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.engine.internal.Cascade;
 
 @Getter
 @Setter
@@ -13,9 +12,8 @@ import org.hibernate.engine.internal.Cascade;
 @Entity
 @Table(name = ConstantTable.INVENTORY)
 public class Inventory {
-
     @Id
-    @GeneratedValue( strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @OneToOne

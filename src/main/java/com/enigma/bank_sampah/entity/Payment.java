@@ -1,4 +1,5 @@
 package com.enigma.bank_sampah.entity;
+
 import com.enigma.bank_sampah.constant.ConstantTable;
 import com.enigma.bank_sampah.constant.SellingStatus;
 import jakarta.persistence.*;
@@ -29,4 +30,3 @@ public class Payment {
     @OneToOne(mappedBy = "payment")
     private Selling selling;
 }
-

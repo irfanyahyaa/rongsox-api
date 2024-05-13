@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
-
     private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)

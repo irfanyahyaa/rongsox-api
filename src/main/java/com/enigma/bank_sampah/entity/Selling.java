@@ -16,7 +16,6 @@ import java.util.List;
 @Entity
 @Table(name = ConstantTable.SELLING)
 public class Selling {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

@@ -14,7 +14,7 @@ public class BankSpecification {
             if (!StringUtils.hasText(q)) return cb.conjunction();
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.like(cb.lower(root.get("name")), "%"+ q.toLowerCase() + "%"));
+            predicates.add(cb.like(cb.lower(root.get("name")), "%" + q.toLowerCase() + "%"));
 
             return cb.or(predicates.toArray(new Predicate[]{}));
         }

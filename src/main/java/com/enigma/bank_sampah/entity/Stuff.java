@@ -12,7 +12,6 @@ import lombok.*;
 @Entity
 @Table(name = ConstantTable.STUFF)
 public class Stuff {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

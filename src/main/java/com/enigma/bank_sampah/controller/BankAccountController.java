@@ -48,7 +48,7 @@ public class BankAccountController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteBankAccount(
+    public ResponseEntity<CommonResponse<String>> deleteBankAccountById(
             @PathVariable(name = "id") String id
     ) {
         bankAccountService.deleteById(id);

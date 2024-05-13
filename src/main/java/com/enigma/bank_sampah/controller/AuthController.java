@@ -27,11 +27,13 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> registerCustomer(@RequestBody CustomerRequest request) {
         RegisterResponse register = authService.registerCustomer(request);
+
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
                 .data(register)
                 .build();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -42,11 +44,13 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> registerCustomerByAdmin(@RequestBody CustomerRequest request) {
         RegisterResponse register = authService.registerCustomerByAdmin(request);
+
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
                 .data(register)
                 .build();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -56,10 +60,12 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> resendOtp(@RequestBody ResendOtpRequest request) {
         authService.resendOtp(request);
+
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_SEND_OTP)
                 .build();
+
         return ResponseEntity.ok(response);
     }
 
@@ -69,22 +75,27 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         authService.forgotPassword(request);
+
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_SEND_OTP)
                 .build();
+
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/set-new-password",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
-    )public ResponseEntity<CommonResponse<?>> setNewPassword(@RequestBody SetNewPasswordRequest request) {
+    )
+    public ResponseEntity<CommonResponse<?>> setNewPassword(@RequestBody SetNewPasswordRequest request) {
         authService.setNewPassword(request);
+
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_SEND_OTP)
                 .build();
+
         return ResponseEntity.ok(response);
     }
 
@@ -95,6 +106,7 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> registerUser(@RequestBody ValidationOtpRequest request) {
         ValidationOtpResponse validationOtpResponse = authService.validateOtp(request);
+
         CommonResponse<ValidationOtpResponse> response = CommonResponse.<ValidationOtpResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_VALIDATE_OTP)
@@ -111,11 +123,13 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> registerAdmin(@RequestBody AdminRequest request) {
         RegisterResponse register = authService.registerAdmin(request);
+
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
                 .data(register)
                 .build();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -125,11 +139,13 @@ public class AuthController {
     )
     public ResponseEntity<CommonResponse<?>> login(@RequestBody AuthRequest request) {
         LoginResponse loginResponse = authService.login(request);
+
         CommonResponse<LoginResponse> response = CommonResponse.<LoginResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_LOGIN)
                 .data(loginResponse)
                 .build();
+
         return ResponseEntity.ok(response);
     }
 
@@ -138,19 +154,21 @@ public class AuthController {
     )
     public ResponseEntity<?> validateToken() {
         boolean valid = authService.validateToken();
+
         if (valid) {
             CommonResponse<String> response = CommonResponse.<String>builder()
                     .statusCode(HttpStatus.OK.value())
                     .message(ResponseMessage.SUCCESS_GET_DATA)
                     .build();
+
             return ResponseEntity.ok(response);
         } else {
             CommonResponse<String> response = CommonResponse.<String>builder()
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
                     .message(ResponseMessage.ERROR_INVALID_JWT)
                     .build();
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-
 }

@@ -37,6 +37,7 @@ public class BankController {
             @RequestBody BankRequest request
     ) {
         BankResponse bankResponse = bankService.create(request);
+
         CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
@@ -128,7 +129,7 @@ public class BankController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteById(
+    public ResponseEntity<CommonResponse<String>> deleteBankById(
             @PathVariable String id
     ) {
         bankService.deleteById(id);

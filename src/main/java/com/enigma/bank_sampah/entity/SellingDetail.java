@@ -13,9 +13,8 @@ import lombok.*;
 @Entity
 @Table(name = ConstantTable.SELLING_DETAIL)
 public class SellingDetail {
-
     @Id
-    @GeneratedValue (strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
@@ -27,7 +26,7 @@ public class SellingDetail {
     @JoinColumn(name = "stuff_id", nullable = false)
     private Stuff stuff;
 
-    @Column( name = "weight")
+    @Column(name = "weight")
     private Integer weight;
 
     @Column(name = "selling_price")
