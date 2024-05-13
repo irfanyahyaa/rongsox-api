@@ -19,5 +19,4 @@ public interface BankService {
     BankResponse update(UpdateBankRequest request);
 
     void deleteById(String id);
-
 }

@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankResponse {
-    private String bankId;
+    private String id;
     private String bankCode;
     private String bankName;
 }

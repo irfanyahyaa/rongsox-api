@@ -35,7 +35,7 @@ public class BankServiceImpl implements BankService {
         bankRepository.saveAndFlush(bank);
 
         return BankResponse.builder()
-                .bankId(bank.getId())
+                .id(bank.getId())
                 .bankName(bank.getName())
                 .bankCode(bank.getBankCode())
                 .build();
@@ -52,7 +52,7 @@ public class BankServiceImpl implements BankService {
 
         return bankRepository.findAll(specification, pageable).map(
                 bank -> BankResponse.builder()
-                        .bankId(bank.getId())
+                        .id(bank.getId())
                         .bankCode(bank.getBankCode())
                         .bankName(bank.getName())
                         .build());
@@ -66,7 +66,7 @@ public class BankServiceImpl implements BankService {
         );
 
         return BankResponse.builder()
-                .bankId(bank.getId())
+                .id(bank.getId())
                 .bankName(bank.getName())
                 .bankCode(bank.getBankCode())
                 .build();

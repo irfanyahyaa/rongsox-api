@@ -25,4 +25,10 @@ public class Stuff {
 
     @Column(name = "selling_price")
     private Long sellingPrice;
+
+    @Column(name = "weight")
+    private Float weight;
+
+    @Column(name = "status")
+    private Boolean status;
 }

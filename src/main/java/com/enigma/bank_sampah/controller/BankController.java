@@ -33,7 +33,7 @@ public class BankController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<?>> createNewBank(
+    public ResponseEntity<CommonResponse<?>> createBank(
             @RequestBody BankRequest request
     ) {
         BankResponse bankResponse = bankService.create(request);
@@ -44,24 +44,6 @@ public class BankController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @GetMapping(
-            path = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<?>> getBankById(
-            @PathVariable String id
-    ) {
-        BankResponse bankResponse = bankService.getByIdDTO(id);
-
-        CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_GET_DATA)
-                .data(bankResponse)
-                .build();
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping(
@@ -99,6 +81,24 @@ public class BankController {
                 .message(ResponseMessage.SUCCESS_GET_DATA)
                 .paging(paging)
                 .data(responsePage.getContent())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<?>> getBankById(
+            @PathVariable String id
+    ) {
+        BankResponse bankResponse = bankService.getByIdDTO(id);
+
+        CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(bankResponse)
                 .build();
 
         return ResponseEntity.ok(response);
