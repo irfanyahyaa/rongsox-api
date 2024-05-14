@@ -50,10 +50,12 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         return BankAccountResponse.builder()
                 .id(bankAccount.getId())
+                .bankId(bankAccount.getBank().getId())
+                .bankCode(bankAccount.getBank().getBankCode())
+                .bankName(bankAccount.getBank().getName())
                 .accountNumber(bankAccount.getAccountNumber())
                 .customerId(bankAccount.getCustomer().getId())
                 .dateCreated(bankAccount.getDateCreated())
-                .bankId(bankAccount.getBank().getId())
                 .status(bankAccount.getStatus())
                 .build();
     }

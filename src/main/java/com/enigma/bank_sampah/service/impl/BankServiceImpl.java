@@ -48,6 +48,7 @@ public class BankServiceImpl implements BankService {
 
         Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of((request.getPage() - 1), request.getSize(), sort);
+
         Specification<Bank> specification = BankSpecification.getSpecification(request.getQuery());
 
         return bankRepository.findAll(specification, pageable).map(

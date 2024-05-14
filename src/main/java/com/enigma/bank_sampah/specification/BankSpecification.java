@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankSpecification {
-    public static Specification<Bank> getSpecification(String q) {
+    public static Specification<Bank> getSpecification(String name) {
         return ((root, query, cb) -> {
-            if (!StringUtils.hasText(q)) return cb.conjunction();
+            if (!StringUtils.hasText(name)) return cb.conjunction();
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.like(cb.lower(root.get("name")), "%" + q.toLowerCase() + "%"));
+            predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
 
             return cb.or(predicates.toArray(new Predicate[]{}));
         }

@@ -11,9 +11,11 @@ import java.util.Date;
 @Builder
 public class BankAccountResponse {
     private String id;
+    private String bankId;
+    private String bankCode;
+    private String bankName;
     private String accountNumber;
     private Date dateCreated;
     private String customerId;
-    private String bankId;
     private Boolean status;
 }

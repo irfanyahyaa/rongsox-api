@@ -68,6 +68,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .bankAccounts(customer.getBankAccounts().stream().map(bankAccount ->
                         BankAccountResponse.builder()
                                 .id(bankAccount.getId())
+                                .bankId(bankAccount.getBank().getId())
+                                .bankCode(bankAccount.getBank().getBankCode())
+                                .bankName(bankAccount.getBank().getName())
                                 .accountNumber(bankAccount.getAccountNumber())
                                 .dateCreated(bankAccount.getDateCreated())
                                 .customerId(bankAccount.getCustomer().getId())

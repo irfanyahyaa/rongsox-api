@@ -55,7 +55,7 @@ public class BankController {
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "bankCode") String sortBy,
             @RequestParam(name = "direction", defaultValue = "asc") String direction,
-            @RequestParam(name = "q", required = false) String query
+            @RequestParam(name = "name", required = false) String name
 
     ) {
         SearchBankRequest request = SearchBankRequest.builder()
@@ -63,7 +63,7 @@ public class BankController {
                 .size(size)
                 .sortBy(sortBy)
                 .direction(direction)
-                .query(query)
+                .query(name)
                 .build();
 
         Page<BankResponse> responsePage = bankService.getAll(request);
