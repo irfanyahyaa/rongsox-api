@@ -61,45 +61,55 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     @Override
     public Bank getByIdEntity(String id) {
-        return bankRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
+        return findByIdOrThrowNotFound(id);
     }
 
     @Transactional(readOnly = true)
     @Override
     public BankResponse getByIdDTO(String id) {
-        Bank bank = bankRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND)
-        );
+        Bank bankFound = findByIdOrThrowNotFound(id);
 
         return BankResponse.builder()
-                .id(bank.getId())
-                .bankName(bank.getName())
-                .bankCode(bank.getBankCode())
+                .id(bankFound.getId())
+                .bankName(bankFound.getName())
+                .bankCode(bankFound.getBankCode())
                 .build();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BankResponse update(UpdateBankRequest request) {
-        Bank bank = getByIdEntity(request.getBankId());
+        Bank bankFound = findByIdOrThrowNotFound(request.getId());
 
-        bank.setName(request.getBankName());
-        bank.setBankCode(request.getBankCode());
+        bankFound.setName(request.getBankName());
+        bankFound.setBankCode(request.getBankCode());
 
-        bankRepository.saveAndFlush(bank);
+        bankRepository.saveAndFlush(bankFound);
 
         return BankResponse.builder()
-                .bankName(bank.getName())
-                .bankCode(bank.getBankCode())
+                .bankName(bankFound.getName())
+                .bankCode(bankFound.getBankCode())
                 .build();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void deleteById(String id) {
-        Bank bank = getByIdEntity(id);
+    public void updateStatus(String id, Boolean status) {
+        findByIdOrThrowNotFound(id);
 
-        bankRepository.delete(bank);
+        bankRepository.updateStatus(id, status);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteById(String id) {
+        findByIdOrThrowNotFound(id);
+
+        bankRepository.updateStatus(id, false);
+    }
+
+    private Bank findByIdOrThrowNotFound(String request) {
+        return bankRepository.findById(request)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }

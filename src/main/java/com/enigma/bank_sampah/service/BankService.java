@@ -18,5 +18,7 @@ public interface BankService {
 
     BankResponse update(UpdateBankRequest request);
 
+    void updateStatus(String id, Boolean status);
+
     void deleteById(String id);
 }

@@ -50,7 +50,7 @@ public class BankController {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<List<BankResponse>>> getAllBanks(
+    public ResponseEntity<CommonResponse<?>> getAllBanks(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "bankCode") String sortBy,
@@ -110,7 +110,7 @@ public class BankController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<?> updateBank(
+    public ResponseEntity<CommonResponse<?>> updateBank(
             @RequestBody UpdateBankRequest request
     ) {
         BankResponse update = bankService.update(request);
@@ -125,11 +125,30 @@ public class BankController {
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
+    @PutMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<CommonResponse<?>> updateBankStatusById(
+            @PathVariable String id,
+            @RequestParam(name = "status") Boolean status
+    ) {
+        bankService.updateStatus(id, status);
+
+        CommonResponse<String> response = CommonResponse.<String>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @DeleteMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteBankById(
+    public ResponseEntity<CommonResponse<?>> deleteBankById(
             @PathVariable String id
     ) {
         bankService.deleteById(id);
