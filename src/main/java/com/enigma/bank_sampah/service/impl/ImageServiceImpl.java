@@ -27,8 +27,10 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
 
     @Autowired
-    public ImageServiceImpl(@Value("${bank_sampah.multipart.path-location}") String directoryPath,
-                            ImageRepository imageRepository) {
+    public ImageServiceImpl(
+            @Value("${bank_sampah.multipart.path-location}") String directoryPath,
+            ImageRepository imageRepository
+    ) {
         this.directoryPath = Paths.get(directoryPath);
         this.imageRepository = imageRepository;
     }
@@ -49,8 +51,11 @@ public class ImageServiceImpl implements ImageService {
         try {
             if (!List.of("image/jpeg", "image/png", "image/jpg", "image/svg+xml").contains(multipartFile.getContentType()))
                 throw new ConstraintViolationException(ResponseMessage.ERROR_INVALID_CONTENT_TYPE, null);
+
             String uniqueFilename = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
+
             Path filePath = directoryPath.resolve(uniqueFilename);
+
             Files.copy(multipartFile.getInputStream(), filePath);
 
             Image image = Image.builder()
@@ -70,10 +75,13 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Resource getById(String id) {
         try {
-            Image image = imageRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
+            Image image = imageRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
             Path filePath = Paths.get(image.getPath());
+
             if (!Files.exists(filePath))
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+
             return new UrlResource(filePath.toUri());
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -85,9 +93,12 @@ public class ImageServiceImpl implements ImageService {
         try {
             Image image = imageRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
+
             Path filePath = Paths.get(image.getPath());
+
             if (!Files.exists(filePath))
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+
             Files.delete(filePath);
             imageRepository.delete(image);
         } catch (IOException e) {
