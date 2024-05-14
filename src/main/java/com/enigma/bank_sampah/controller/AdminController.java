@@ -29,7 +29,7 @@ public class AdminController {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<List<AdminResponse>>> getAllAdmins(
+    public ResponseEntity<CommonResponse<?>> getAllAdmins(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
@@ -46,21 +46,21 @@ public class AdminController {
                 .status(status)
                 .build();
 
-        Page<AdminResponse> admins = adminService.getAll(request);
+        Page<AdminResponse> adminPages = adminService.getAll(request);
 
         PagingResponse pagingResponse = PagingResponse.builder()
-                .totalPages(admins.getTotalPages())
-                .totalElement(admins.getTotalElements())
-                .page(admins.getPageable().getPageNumber() + 1)
-                .size(admins.getPageable().getPageSize())
-                .hasNext(admins.hasNext())
-                .hasPrevious(admins.hasPrevious())
+                .totalPages(adminPages.getTotalPages())
+                .totalElement(adminPages.getTotalElements())
+                .page(adminPages.getPageable().getPageNumber() + 1)
+                .size(adminPages.getPageable().getPageSize())
+                .hasNext(adminPages.hasNext())
+                .hasPrevious(adminPages.hasPrevious())
                 .build();
 
         CommonResponse<List<AdminResponse>> commonResponse = CommonResponse.<List<AdminResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
-                .data(admins.getContent())
+                .data(adminPages.getContent())
                 .paging(pagingResponse)
                 .build();
 
@@ -70,7 +70,7 @@ public class AdminController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @GetMapping(path = "/{id}")
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<AdminResponse>> getAdminById(
+    public ResponseEntity<CommonResponse<?>> getAdminById(
             @PathVariable(name = "id") String id
     ) {
         AdminResponse menu = adminService.getByIdDTO(id);
@@ -89,7 +89,7 @@ public class AdminController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<AdminResponse>> updateAdmin(
+    public ResponseEntity<CommonResponse<?>> updateAdmin(
             @RequestBody UpdateAdminRequest request
     ) {
         AdminResponse admin = adminService.update(request);
@@ -108,7 +108,7 @@ public class AdminController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> updateStatusAdminById(
+    public ResponseEntity<CommonResponse<?>> updateAdminStatusById(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "status") Boolean status
     ) {
@@ -127,7 +127,7 @@ public class AdminController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteAdminById(
+    public ResponseEntity<CommonResponse<?>> deleteAdminById(
             @PathVariable(name = "id") String id
     ) {
         adminService.deleteById(id);

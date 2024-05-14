@@ -31,7 +31,7 @@ public class CustomerController {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<List<CustomerResponse>>> getAllCustomers(
+    public ResponseEntity<CommonResponse<?>> getAllCustomers(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
@@ -71,7 +71,7 @@ public class CustomerController {
 
     @GetMapping(path = "/{id}")
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<CustomerResponse>> getCustomerById(
+    public ResponseEntity<CommonResponse<?>> getCustomerById(
             @PathVariable(name = "id") String id
     ) {
         CustomerResponse customerResponse = customerService.getByIdDTO(id);
@@ -89,7 +89,7 @@ public class CustomerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<CustomerResponse>> updateCustomer(
+    public ResponseEntity<CommonResponse<?>> updateCustomer(
             @RequestBody UpdateCustomerRequest request
     ) {
         CustomerResponse customer = customerService.update(request);
@@ -108,7 +108,7 @@ public class CustomerController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> updateStatusCustomerById(
+    public ResponseEntity<CommonResponse<?>> updateCustomerStatusById(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "status") Boolean status
     ) {
@@ -127,7 +127,7 @@ public class CustomerController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<CommonResponse<String>> deleteCustomerById(
+    public ResponseEntity<CommonResponse<?>> deleteCustomerById(
             @PathVariable(name = "id") String id
     ) {
         customerService.deleteById(id);

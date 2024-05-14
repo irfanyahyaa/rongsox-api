@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ErrorController {
-
     @ExceptionHandler({ResponseStatusException.class})
     public ResponseEntity<CommonResponse<?>> responseStatusExceptionHandler(ResponseStatusException exception) {
         // <?> == Object class
