@@ -133,6 +133,12 @@ public class CustomerServiceImpl implements CustomerService {
             customerFound.setPhoneNumber(null);
         }
 
+        if (request.getKtpNumber() != null && !request.getKtpNumber().equals(customerFound.getKtpNumber())) {
+            findByKtpNumber(request.getKtpNumber());
+        } else {
+            customerFound.setKtpNumber(null);
+        }
+
         Customer customer = Customer.builder()
                 .id(customerFound.getId())
                 .address(request.getAddress())
@@ -192,8 +198,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void findByPhoneNumber(String phoneNumber) {
         Optional<Customer> existingPhoneNumber = customerRepository.findByPhoneNumber(phoneNumber);
+
         if (existingPhoneNumber.isPresent()) {
             throw new DataIntegrityViolationException("Phone number already exists");
+        }
+    }
+
+    @Override
+    public void findByKtpNumber(String ktpNumber) {
+        Optional<Customer> existingKtpNumber = customerRepository.findByKtpNumber(ktpNumber);
+
+        if (existingKtpNumber.isPresent()) {
+            throw new DataIntegrityViolationException("Ktp number already exists");
         }
     }
 

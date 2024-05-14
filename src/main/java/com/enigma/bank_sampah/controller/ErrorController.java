@@ -65,6 +65,11 @@ public class ErrorController {
             builder.message("Phone number already exists");
 
             httpStatus = HttpStatus.CONFLICT;
+        } else if (e.getMessage().contains("Ktp number already exists") || e.getMessage().contains("Duplicate entry")) {
+            builder.statusCode(HttpStatus.CONFLICT.value());
+            builder.message("Ktp number already exists");
+
+            httpStatus = HttpStatus.CONFLICT;
         } else {
             builder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             builder.message("Internal Server Error");

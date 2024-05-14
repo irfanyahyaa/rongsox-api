@@ -79,6 +79,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegisterResponse registerCustomer(CustomerRequest request) throws DataIntegrityViolationException {
         checkEmailAndUserName(request.getUsername(), request.getEmail());
+        customerService.findByPhoneNumber(request.getPhoneNumber());
+        customerService.findByKtpNumber(request.getKtpNumber());
 
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -90,12 +92,11 @@ public class AuthServiceImpl implements AuthService {
                 .role(List.of(role))
                 .isEnable(false)
                 .build();
-
         userAccountRepository.saveAndFlush(account);
 
         Customer customer = Customer.builder()
                 .name(request.getName())
-                .phoneNumber(request.getMobilePhoneNo())
+                .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
                 .birthDate(request.getBirthDate())
                 .ktpNumber(request.getKtpNumber())
@@ -128,6 +129,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegisterResponse registerCustomerByAdmin(CustomerRequest request) throws DataIntegrityViolationException {
         checkEmailAndUserName(request.getUsername(), request.getEmail());
+        customerService.findByPhoneNumber(request.getPhoneNumber());
+        customerService.findByKtpNumber(request.getKtpNumber());
 
         Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -139,12 +142,11 @@ public class AuthServiceImpl implements AuthService {
                 .role(List.of(role))
                 .isEnable(true)
                 .build();
-
         userAccountRepository.saveAndFlush(account);
 
         Customer customer = Customer.builder()
                 .name(request.getName())
-                .phoneNumber(request.getMobilePhoneNo())
+                .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
                 .birthDate(request.getBirthDate())
                 .ktpNumber(request.getKtpNumber())

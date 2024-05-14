@@ -15,7 +15,7 @@ public class CustomerRequest {
     private String password;
     private String name;
     private String email;
-    private String mobilePhoneNo;
+    private String phoneNumber;
     private String ktpNumber;
     private String address;
     @JsonFormat(pattern = "yyyy-MM-dd")

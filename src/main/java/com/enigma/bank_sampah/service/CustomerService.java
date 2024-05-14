@@ -24,4 +24,6 @@ public interface CustomerService {
     void deleteById(String id);
 
     void findByPhoneNumber(String phoneNumber);
+
+    void findByKtpNumber(String ktpNumber);
 }
