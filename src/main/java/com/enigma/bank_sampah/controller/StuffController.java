@@ -8,8 +8,9 @@ import com.enigma.bank_sampah.dto.request.UpdateStuffRequest;
 import com.enigma.bank_sampah.dto.response.CommonResponse;
 import com.enigma.bank_sampah.dto.response.PagingResponse;
 import com.enigma.bank_sampah.dto.response.StuffResponse;
-import com.enigma.bank_sampah.entity.Stuff;
 import com.enigma.bank_sampah.service.StuffService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,24 +30,35 @@ import java.util.List;
 @Slf4j
 public class StuffController {
     private final StuffService stuffService;
+    private final ObjectMapper objectMapper;
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<?>> createStuff(
-            @RequestBody StuffRequest request
+            @RequestPart(name = "stuff") String jsonStuff,
+            @RequestPart(name = "image", required = false) MultipartFile image
     ) {
-        StuffResponse stuffResponse = stuffService.create(request);
+        CommonResponse.CommonResponseBuilder<StuffResponse> responseBuilder = CommonResponse.builder();
 
-        CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message(ResponseMessage.SUCCESS_SAVE_DATA)
-                .data(stuffResponse)
-                .build();
+        try {
+            StuffRequest request = objectMapper.readValue(jsonStuff, new TypeReference<>() {});
+            request.setImage(image);
+            StuffResponse stuff = stuffService.create(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            responseBuilder.statusCode(HttpStatus.CREATED.value());
+            responseBuilder.message(ResponseMessage.SUCCESS_SAVE_DATA);
+            responseBuilder.data(stuff);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(responseBuilder.build());
+        } catch (Exception exception) {
+            responseBuilder.message(ResponseMessage.ERROR_INTERNAL_SERVER);
+            responseBuilder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBuilder.build());
+        }
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'CUSTOMER')")
@@ -69,21 +82,21 @@ public class StuffController {
                 .status(status)
                 .build();
 
-        Page<Stuff> stuffs = stuffService.getAll(request);
+        Page<StuffResponse> stuffPages = stuffService.getAll(request);
 
         PagingResponse pagingResponse = PagingResponse.builder()
-                .totalPages(stuffs.getTotalPages())
-                .totalElement(stuffs.getTotalElements())
-                .page(stuffs.getPageable().getPageNumber() + 1)
-                .size(stuffs.getPageable().getPageSize())
-                .hasNext(stuffs.hasNext())
-                .hasPrevious(stuffs.hasPrevious())
+                .totalPages(stuffPages.getTotalPages())
+                .totalElement(stuffPages.getTotalElements())
+                .page(stuffPages.getPageable().getPageNumber() + 1)
+                .size(stuffPages.getPageable().getPageSize())
+                .hasNext(stuffPages.hasNext())
+                .hasPrevious(stuffPages.hasPrevious())
                 .build();
 
-        CommonResponse<List<Stuff>> response = CommonResponse.<List<Stuff>>builder()
+        CommonResponse<List<StuffResponse>> response = CommonResponse.<List<StuffResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
-                .data(stuffs.getContent())
+                .data(stuffPages.getContent())
                 .paging(pagingResponse)
                 .build();
 

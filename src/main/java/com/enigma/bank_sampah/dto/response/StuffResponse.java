@@ -13,5 +13,6 @@ public class StuffResponse {
     private Long buyingPrice;
     private Long sellingPrice;
     private Float weight;
+    private ImageResponse image;
     private Boolean status;
 }

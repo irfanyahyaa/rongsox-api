@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 public interface StuffService {
     StuffResponse create(StuffRequest request);
 
-    Page<Stuff> getAll(SearchStuffRequest request);
+    Page<StuffResponse> getAll(SearchStuffRequest request);
 
     Stuff getByIdEntity(String id);
 

@@ -30,4 +30,8 @@ public class Stuff {
 
     @Column(name = "status")
     private Boolean status;
+
+    @OneToOne
+    @JoinColumn(name = "image_id", unique = true)
+    private Image image;
 }

@@ -1,14 +1,19 @@
 package com.enigma.bank_sampah.service.impl;
 
+import com.enigma.bank_sampah.constant.APIUrl;
 import com.enigma.bank_sampah.constant.ResponseMessage;
 import com.enigma.bank_sampah.dto.request.SearchStuffRequest;
 import com.enigma.bank_sampah.dto.request.StuffRequest;
 import com.enigma.bank_sampah.dto.request.UpdateStuffRequest;
+import com.enigma.bank_sampah.dto.response.ImageResponse;
 import com.enigma.bank_sampah.dto.response.StuffResponse;
+import com.enigma.bank_sampah.entity.Image;
 import com.enigma.bank_sampah.entity.Stuff;
 import com.enigma.bank_sampah.repository.StuffRepository;
+import com.enigma.bank_sampah.service.ImageService;
 import com.enigma.bank_sampah.service.StuffService;
 import com.enigma.bank_sampah.specification.StuffSpecification;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,16 +29,21 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class StuffServiceImpl implements StuffService {
     private final StuffRepository stuffRepository;
+    private final ImageService imageService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public StuffResponse create(StuffRequest request) {
+        if (request.getImage().isEmpty()) throw new ConstraintViolationException("image is required", null);
+        Image image = imageService.create(request.getImage());
+
         Stuff stuff = Stuff.builder()
                 .stuffName(request.getStuffName())
                 .buyingPrice(request.getBuyingPrice())
                 .sellingPrice(request.getSellingPrice())
                 .weight(0F)
                 .status(true)
+                .image(image)
                 .build();
         stuffRepository.saveAndFlush(stuff);
 
@@ -44,12 +54,16 @@ public class StuffServiceImpl implements StuffService {
                 .sellingPrice(stuff.getSellingPrice())
                 .weight(stuff.getWeight())
                 .status(stuff.getStatus())
+                .image(ImageResponse.builder()
+                        .url(APIUrl.IMAGE_API + "/" + stuff.getImage().getId())
+                        .name(stuff.getImage().getName())
+                        .build())
                 .build();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Stuff> getAll(SearchStuffRequest request) {
+    public Page<StuffResponse> getAll(SearchStuffRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
 
         Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
@@ -57,7 +71,20 @@ public class StuffServiceImpl implements StuffService {
         Pageable pageable = PageRequest.of((request.getPage() - 1), request.getSize(), sort);
         Specification<Stuff> specification = StuffSpecification.getSpecification(request);
 
-        return stuffRepository.findAll(specification, pageable);
+        Page<Stuff> stuffPage = stuffRepository.findAll(specification, pageable);
+
+        return stuffPage.map(stuff -> StuffResponse.builder()
+                .id(stuff.getId())
+                .stuffName(stuff.getStuffName())
+                .buyingPrice(stuff.getBuyingPrice())
+                .sellingPrice(stuff.getSellingPrice())
+                .weight(stuff.getWeight())
+                .image(ImageResponse.builder()
+                        .url(APIUrl.IMAGE_API + "/" + stuff.getImage().getId())
+                        .name(stuff.getImage().getName())
+                        .build())
+                .status(stuff.getStatus())
+                .build());
     }
 
     @Transactional(readOnly = true)
