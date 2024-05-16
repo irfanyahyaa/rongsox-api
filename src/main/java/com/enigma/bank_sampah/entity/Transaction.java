@@ -1,8 +1,8 @@
 package com.enigma.bank_sampah.entity;
 
 import com.enigma.bank_sampah.constant.ConstantTable;
-import com.enigma.bank_sampah.constant.TransactionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,26 +25,36 @@ public class Transaction {
     @Column(name = "transaction_date")
     private Date transactionDate;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type")
-    private TransactionType transactionType;
+    private String transactionType;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "bank_account_id")
     @JsonBackReference
     private BankAccount bankAccount;
 
-    @OneToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    @Column(name = "amount")
+    private Long amount;
 
     @OneToOne
-    @JoinColumn(name = "withdrawal_image_id")
-    private Image withdrawalImageId;
+    @JoinColumn(name = "transfer_receipt")
+    private Image transferReceipt;
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @OneToMany(mappedBy = "transaction")
+    @JsonManagedReference
     private List<TransactionDetail> transactionDetails;
 }

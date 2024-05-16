@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum TransactionType {
     DEPOSIT("deposit", "Deposit"),
-    WITHDRAWAL("withdrawal", "WithDrawal");
+    WITHDRAWAL("withdrawal", "Withdrawal");
 
     private String name;
     private String description;

@@ -27,7 +27,7 @@ public class TransactionDetail {
     private Stuff stuff;
 
     @Column(name = "weight")
-    private Integer weight;
+    private Float weight;
 
     @Column(name = "buying_price")
     private Long buyingPrice;

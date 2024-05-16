@@ -55,7 +55,7 @@ public class StuffServiceImpl implements StuffService {
                 .weight(stuff.getWeight())
                 .status(stuff.getStatus())
                 .image(ImageResponse.builder()
-                        .url(APIUrl.IMAGE_API + "/" + stuff.getImage().getId())
+                        .url(APIUrl.STUFF_IMAGE_API + "/" + stuff.getImage().getId())
                         .name(stuff.getImage().getName())
                         .build())
                 .build();
@@ -80,7 +80,7 @@ public class StuffServiceImpl implements StuffService {
                 .sellingPrice(stuff.getSellingPrice())
                 .weight(stuff.getWeight())
                 .image(ImageResponse.builder()
-                        .url(APIUrl.IMAGE_API + "/" + stuff.getImage().getId())
+                        .url(APIUrl.STUFF_IMAGE_API + "/" + stuff.getImage().getId())
                         .name(stuff.getImage().getName())
                         .build())
                 .status(stuff.getStatus())

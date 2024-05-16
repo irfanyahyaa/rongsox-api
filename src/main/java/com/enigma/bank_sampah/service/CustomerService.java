@@ -26,4 +26,6 @@ public interface CustomerService {
     void findByPhoneNumber(String phoneNumber);
 
     void findByKtpNumber(String ktpNumber);
+
+    void updateBalanceById(String id, Long balance);
 }

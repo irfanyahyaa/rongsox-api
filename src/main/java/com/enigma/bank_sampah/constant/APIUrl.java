@@ -7,5 +7,7 @@ public class APIUrl {
     public static final String BANK_API = "/api/banks";
     public static final String BANK_ACCOUNT_API = "/api/bank-accounts";
     public static final String STUFF_API = "/api/stuffs";
-    public static final String IMAGE_API = "/api/stuffs/images";
+    public static final String TRANSACTION_API = "/api/transactions";
+    public static final String STUFF_IMAGE_API = "/api/stuffs/images";
+    public static final String TRANSACTION_IMAGE__API = "/api/transactions/images";
 }

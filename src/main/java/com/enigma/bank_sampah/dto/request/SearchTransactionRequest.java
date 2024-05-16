@@ -7,11 +7,11 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchCustomerRequest {
+public class SearchTransactionRequest {
     private Integer page;
     private Integer size;
     private String sortBy;
     private String direction;
-    private String name;
-    private Boolean status;
+    private String transactionType;
+    private String status;
 }

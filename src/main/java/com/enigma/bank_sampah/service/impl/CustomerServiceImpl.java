@@ -213,6 +213,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public void updateBalanceById(String id, Long balance) {
+        Customer customer = findByIdOrThrowNotFound(id);
+        customer.setBalance(customer.getBalance() + balance);
+
+        customerRepository.saveAndFlush(customer);
+    }
+
     private Customer findByIdOrThrowNotFound(String id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));

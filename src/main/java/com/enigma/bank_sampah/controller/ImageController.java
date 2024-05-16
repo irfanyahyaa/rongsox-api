@@ -23,7 +23,7 @@ public class ImageController {
             summary = "Download image",
             description = "Download image"
     )
-    @GetMapping(path = APIUrl.IMAGE_API + "/{imageId}")
+    @GetMapping(path = APIUrl.STUFF_IMAGE_API + "/{imageId}")
     public ResponseEntity<?> download(
             @PathVariable String imageId
     ) {
