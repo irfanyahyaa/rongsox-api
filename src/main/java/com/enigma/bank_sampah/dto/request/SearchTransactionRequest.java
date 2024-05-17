@@ -13,5 +13,6 @@ public class SearchTransactionRequest {
     private String sortBy;
     private String direction;
     private String transactionType;
+    private String customerId;
     private String status;
 }

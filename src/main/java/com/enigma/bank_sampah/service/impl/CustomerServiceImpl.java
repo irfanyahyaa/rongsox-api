@@ -114,6 +114,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .phoneNumber(customerFound.getPhoneNumber())
                 .ktpNumber(customerFound.getKtpNumber())
                 .ktpImage(customerFound.getKtpImage())
+                .balance(customerFound.getBalance())
                 .profileImage(customerFound.getProfileImage())
                 .email(customerFound.getUserAccount().getEmail())
                 .username(customerFound.getUserAccount().getUsername())

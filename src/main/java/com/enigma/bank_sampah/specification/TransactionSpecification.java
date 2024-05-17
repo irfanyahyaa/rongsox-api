@@ -13,12 +13,16 @@ public class TransactionSpecification {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            if (request.getCustomerId() != null) {
+                predicates.add(cb.like(cb.lower(root.get("customerId")), "%" + request.getCustomerId().toLowerCase() + "%"));
+            }
+
             if (request.getTransactionType() != null) {
                 predicates.add(cb.like(cb.lower(root.get("transactionType")), "%" + request.getTransactionType().toLowerCase() + "%"));
             }
 
             if (request.getStatus() != null) {
-                predicates.add(cb.equal(root.get("status"), request.getStatus()));
+                predicates.add(cb.like(cb.lower(root.get("status")), "%" + request.getStatus().toLowerCase() + "%"));
             }
 
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();

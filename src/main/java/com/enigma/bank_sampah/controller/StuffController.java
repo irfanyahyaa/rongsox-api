@@ -43,7 +43,8 @@ public class StuffController {
         CommonResponse.CommonResponseBuilder<StuffResponse> responseBuilder = CommonResponse.builder();
 
         try {
-            StuffRequest request = objectMapper.readValue(jsonStuff, new TypeReference<>() {});
+            StuffRequest request = objectMapper.readValue(jsonStuff, new TypeReference<>() {
+            });
             request.setImage(image);
             StuffResponse stuff = stuffService.create(request);
 
@@ -124,21 +125,34 @@ public class StuffController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @PutMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<?>> updateStuff(
-            @RequestBody UpdateStuffRequest request
+            @RequestPart(name = "stuff") String jsonStuff,
+            @RequestPart(name = "image", required = false) MultipartFile image
     ) {
-        StuffResponse stuffResponse = stuffService.update(request);
+        CommonResponse.CommonResponseBuilder<StuffResponse> responseBuilder = CommonResponse.builder();
 
-        CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-                .data(stuffResponse)
-                .build();
+        try {
+            UpdateStuffRequest request = objectMapper.readValue(jsonStuff, new TypeReference<>() {});
+            request.setImage(image);
+            StuffResponse stuff = stuffService.update(request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+            CommonResponse<StuffResponse> response = CommonResponse.<StuffResponse>builder()
+                    .statusCode(HttpStatus.OK.value())
+                    .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                    .data(stuff)
+                    .build();
+
+            return ResponseEntity
+                    .ok(response);
+        } catch (Exception exception) {
+            responseBuilder.message(ResponseMessage.ERROR_INTERNAL_SERVER);
+            responseBuilder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBuilder.build());
+        }
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")

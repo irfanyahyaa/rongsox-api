@@ -113,9 +113,15 @@ public class StuffServiceImpl implements StuffService {
     public StuffResponse update(UpdateStuffRequest request) {
         Stuff stuff = findByIdOrThrowNotFound(request.getId());
 
+        if (request.getImage() != null && stuff.getImage() != null) {
+            Image image = imageService.create(request.getImage());
+            String deletedImage = stuff.getImage().getId();
+
+            stuff.setImage(image);
+            imageService.deleteById(deletedImage);
+        }
         stuff.setBuyingPrice(request.getBuyingPrice());
         stuff.setSellingPrice(request.getSellingPrice());
-
         stuffRepository.saveAndFlush(stuff);
 
         return StuffResponse.builder()
@@ -124,6 +130,10 @@ public class StuffServiceImpl implements StuffService {
                 .buyingPrice(stuff.getBuyingPrice())
                 .sellingPrice(stuff.getSellingPrice())
                 .weight(stuff.getWeight())
+                .image(ImageResponse.builder()
+                        .url(APIUrl.STUFF_IMAGE_API + "/" + stuff.getImage().getId())
+                        .name(stuff.getImage().getName())
+                        .build())
                 .status(stuff.getStatus())
                 .build();
     }

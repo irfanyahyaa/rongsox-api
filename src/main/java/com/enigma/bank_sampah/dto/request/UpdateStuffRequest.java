@@ -1,6 +1,7 @@
 package com.enigma.bank_sampah.dto.request;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -14,4 +15,5 @@ public class UpdateStuffRequest {
     private Long sellingPrice;
     private Float weight;
     private Boolean status;
+    private MultipartFile image;
 }

@@ -72,7 +72,6 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
@@ -80,7 +79,8 @@ public class TransactionController {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "transactionDate") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "asc") String direction,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction,
+            @RequestParam(name = "customerId", required = false) String customerId,
             @RequestParam(name = "transactionType", required = false) String transactionType,
             @RequestParam(name = "status", required = false) String status
     ) {
@@ -89,6 +89,7 @@ public class TransactionController {
                 .size(size)
                 .sortBy(sortBy)
                 .direction(direction)
+                .customerId(customerId)
                 .transactionType(transactionType)
                 .status(status)
                 .build();
@@ -139,21 +140,21 @@ public class TransactionController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<CommonResponse<?>> updateWithdrawalStatusById(
-            @RequestPart(name = "withdrawal") String jsonMenu,
+            @RequestPart(name = "withdrawal") String jsonWithdrawal,
             @RequestPart(name = "image", required = false) MultipartFile image
     ) {
         CommonResponse.CommonResponseBuilder<TransactionResponse> responseBuilder = CommonResponse.builder();
 
         try {
-            UpdateWithdrawalRequest request = objectMapper.readValue(jsonMenu, new TypeReference<>() {
+            UpdateWithdrawalRequest request = objectMapper.readValue(jsonWithdrawal, new TypeReference<>() {
             });
             request.setImage(image);
-            TransactionResponse menu = transactionService.updateStatusWithdrawal(request);
+            TransactionResponse transaction = transactionService.updateStatusWithdrawal(request);
 
             CommonResponse<TransactionResponse> response = CommonResponse.<TransactionResponse>builder()
                     .statusCode(HttpStatus.OK.value())
                     .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-                    .data(menu)
+                    .data(transaction)
                     .build();
 
             return ResponseEntity

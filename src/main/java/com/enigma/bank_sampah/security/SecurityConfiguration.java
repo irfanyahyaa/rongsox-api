@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/transactions/status").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stuffs/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/transactions/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stuffs/**").permitAll()
                         .anyRequest().authenticated())
 //                        .anyRequest().permitAll())

@@ -20,6 +20,7 @@ public class CustomerResponse {
     private String ktpNumber;
     private Image ktpImage;
     private Image profileImage;
+    private Long balance;
     private String email;
     private String username;
     private List<BankAccountResponse> bankAccounts;

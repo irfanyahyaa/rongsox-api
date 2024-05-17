@@ -173,6 +173,30 @@ public class TransactionServiceImpl implements TransactionService {
                                 .amount(transaction.getAmount())
                                 .status(transaction.getStatus())
                                 .build();
+                    } else if (transaction.getTransactionType().equalsIgnoreCase("Withdrawal") && transaction.getTransferReceipt() != null) {
+                        return TransactionResponse.builder()
+                                .id(transaction.getId())
+                                .transactionDate(transaction.getTransactionDate())
+                                .transactionType(transaction.getTransactionType())
+                                .adminId(transaction.getAdmin().getId())
+                                .adminName(transaction.getAdmin().getName())
+                                .adminPhoneNumber(transaction.getAdmin().getPhoneNumber())
+                                .adminAddress(transaction.getAdmin().getAddress())
+                                .customerId(transaction.getCustomer().getId())
+                                .customerName(transaction.getCustomer().getName())
+                                .customerPhoneNumber(transaction.getCustomer().getPhoneNumber())
+                                .customerAddress(transaction.getCustomer().getAddress())
+                                .bankName(transaction.getBankAccount().getBank().getName())
+                                .bankCode(transaction.getBankAccount().getBank().getBankCode())
+                                .accountNumber(transaction.getBankAccount().getAccountNumber())
+                                .paymentMethod(transaction.getPaymentMethod())
+                                .amount(transaction.getAmount())
+                                .transferReceipt(ImageResponse.builder()
+                                        .url(APIUrl.TRANSACTION_IMAGE__API + "/" + transaction.getTransferReceipt().getId())
+                                        .name(transaction.getTransferReceipt().getName())
+                                        .build())
+                                .status(transaction.getStatus())
+                                .build();
                     } else {
                         return TransactionResponse.builder()
                                 .id(transaction.getId())
@@ -202,9 +226,14 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionResponse updateStatusWithdrawal(UpdateWithdrawalRequest request) {
         Transaction transaction = findByIdOrThrowNotFound(request.getId());
 
-        if (request.getImage() != null) {
+        if (request.getImage() != null && transaction.getTransferReceipt() != null) {
             Image image = imageService.create(request.getImage());
+            String deletedImage = transaction.getTransferReceipt().getId();
 
+            transaction.setTransferReceipt(image);
+            imageService.deleteById(deletedImage);
+        } else {
+            Image image = imageService.create(request.getImage());
             transaction.setTransferReceipt(image);
         }
         transaction.setStatus(request.getStatus());

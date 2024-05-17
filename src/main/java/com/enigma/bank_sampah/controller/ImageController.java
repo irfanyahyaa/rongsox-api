@@ -24,7 +24,25 @@ public class ImageController {
             description = "Download image"
     )
     @GetMapping(path = APIUrl.STUFF_IMAGE_API + "/{imageId}")
-    public ResponseEntity<?> download(
+    public ResponseEntity<?> downloadStuff(
+            @PathVariable String imageId
+    ) {
+        Resource resource = imageService.getById(imageId);
+
+        String headerValue = String.format("attachment; filename=%s", resource.getFilename());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION,headerValue)
+                .body(resource);
+    }
+
+    @Operation(
+            summary = "Download image",
+            description = "Download image"
+    )
+    @GetMapping(path = APIUrl.TRANSACTION_IMAGE__API + "/{imageId}")
+    public ResponseEntity<?> downloadTransaction(
             @PathVariable String imageId
     ) {
         Resource resource = imageService.getById(imageId);
